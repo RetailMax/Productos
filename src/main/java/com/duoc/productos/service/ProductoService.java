@@ -2,6 +2,7 @@ package com.duoc.productos.service;
 
 import com.duoc.productos.model.Producto;
 import com.duoc.productos.repository.ProductoRepository;
+import com.duoc.productos.repository.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +15,15 @@ public class ProductoService {
     @Autowired
     private ProductoRepository productoRepository;
 
+    @Autowired
+    private CategoriaRepository categoriaRepository;
+
     // Crear o actualizar producto
     public Producto save(Producto producto) {
+        if (producto.getCategoria() != null && producto.getCategoria().getCategoriaId() != null) {
+            categoriaRepository.findById(producto.getCategoria().getCategoriaId())
+                .ifPresent(producto::setCategoria);
+        }
         return productoRepository.save(producto);
     }
 

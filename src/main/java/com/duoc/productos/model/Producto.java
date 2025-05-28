@@ -1,5 +1,4 @@
 package com.duoc.productos.model;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
@@ -46,6 +45,10 @@ public class Producto {
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
 
     @PrePersist
     protected void onCreate() {
