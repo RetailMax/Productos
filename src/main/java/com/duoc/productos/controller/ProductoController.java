@@ -17,8 +17,35 @@ public class ProductoController {
     private ProductoService productoService;
     
     @GetMapping
-    public List<Producto> getAllProductos() {
-        return productoService.findAll();
+    public Object getProductos(
+            @RequestParam(value = "categoria", required = false) Long categoriaId,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size,
+            @RequestParam(value = "sort", required = false) String sort
+    ) {
+        // Si se solicita paginación
+        if (page != null && size != null) {
+            org.springframework.data.domain.Pageable pageable;
+            if (sort != null) {
+                String[] sortParams = sort.split(",");
+                String sortField = sortParams[0];
+                org.springframework.data.domain.Sort.Direction direction = sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc") ? org.springframework.data.domain.Sort.Direction.DESC : org.springframework.data.domain.Sort.Direction.ASC;
+                pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by(direction, sortField));
+            } else {
+                pageable = org.springframework.data.domain.PageRequest.of(page, size);
+            }
+            if (categoriaId != null) {
+                return productoService.findByCategoriaPaged(categoriaId, pageable);
+            } else {
+                return productoService.findAllActivePaged(pageable);
+            }
+        } else if (categoriaId != null) {
+            // Solo filtrar por categoría
+            return productoService.findByCategoria(categoriaId);
+        } else {
+            // Listar todos los productos activos
+            return productoService.findAll().stream().filter(Producto::getIsActive).toList();
+        }
     }
     
     @GetMapping("/{id}")
@@ -65,5 +92,31 @@ public class ProductoController {
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+    
+    @GetMapping("/search")
+    public List<Producto> searchProductos(@RequestParam("q") String query) {
+        return productoService.searchProductos(query);
+    }
+    
+    @PutMapping("/{id}/activar")
+    public ResponseEntity<Void> activarProducto(@PathVariable Long id) {
+        boolean result = productoService.activarProducto(id);
+        return result ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/inactivos")
+    public List<Producto> getProductosInactivos() {
+        return productoService.findInactivos();
+    }
+
+    @GetMapping("/count-by-categoria")
+    public List<Object[]> countByCategoria() {
+        return productoService.countByCategoria();
+    }
+
+    @GetMapping("/exists")
+    public boolean existsByName(@RequestParam("name") String name) {
+        return productoService.existsByName(name);
     }
 } 

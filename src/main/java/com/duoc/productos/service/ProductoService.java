@@ -5,6 +5,8 @@ import com.duoc.productos.repository.ProductoRepository;
 import com.duoc.productos.repository.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,13 +39,60 @@ public class ProductoService {
         return productoRepository.findAll();
     }
 
-    // Eliminar producto por ID
+    // Eliminar producto por ID (borrado lógico)
     public void deleteById(Long id) {
-        productoRepository.deleteById(id);
+        productoRepository.findById(id).ifPresent(producto -> {
+            producto.setIsActive(false);
+            productoRepository.save(producto);
+        });
     }
 
     // Verificar si existe producto por ID
     public boolean existsById(Long id) {
         return productoRepository.existsById(id);
+    }
+
+    // Búsqueda por texto en nombre, descripción o marca
+    public List<Producto> searchProductos(String query) {
+        return productoRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrBrandContainingIgnoreCase(query, query, query);
+    }
+
+    // Listar productos por categoría (solo activos)
+    public List<Producto> findByCategoria(Long categoriaId) {
+        return productoRepository.findByCategoria_CategoriaIdAndIsActiveTrue(categoriaId);
+    }
+
+    // Listar productos activos con paginación y ordenamiento
+    public Page<Producto> findAllActivePaged(Pageable pageable) {
+        return productoRepository.findByIsActiveTrue(pageable);
+    }
+
+    // Listar productos por categoría con paginación y ordenamiento
+    public Page<Producto> findByCategoriaPaged(Long categoriaId, Pageable pageable) {
+        return productoRepository.findByCategoria_CategoriaIdAndIsActiveTrue(categoriaId, pageable);
+    }
+
+    // Activar producto (borrado lógico inverso)
+    public boolean activarProducto(Long id) {
+        return productoRepository.findById(id).map(producto -> {
+            producto.setIsActive(true);
+            productoRepository.save(producto);
+            return true;
+        }).orElse(false);
+    }
+
+    // Obtener productos inactivos
+    public List<Producto> findInactivos() {
+        return productoRepository.findByIsActiveFalse();
+    }
+
+    // Contar productos activos por categoría
+    public List<Object[]> countByCategoria() {
+        return productoRepository.countActiveByCategoria();
+    }
+
+    // Validar existencia de producto por nombre
+    public boolean existsByName(String name) {
+        return productoRepository.existsByNameIgnoreCase(name);
     }
 }
