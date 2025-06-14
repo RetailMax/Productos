@@ -2,10 +2,14 @@ package com.duoc.productos.controller;
 
 import com.duoc.productos.model.Categoria;
 import com.duoc.productos.service.CategoriaService;
+import com.duoc.productos.assemblers.CategoriaModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
 
 @RestController
 @RequestMapping("/categorias")
@@ -15,14 +19,22 @@ public class CategoriaController {
     @Autowired
     private CategoriaService categoriaService;
     
+    @Autowired
+    private CategoriaModelAssembler categoriaModelAssembler;
+    
     @GetMapping
-    public List<Categoria> getAllCategorias() {
-        return categoriaService.getAllCategorias();
+    public CollectionModel<EntityModel<Categoria>> getAllCategorias() {
+        List<Categoria> categorias = categoriaService.getAllCategorias();
+        List<EntityModel<Categoria>> categoriasModel = categorias.stream()
+                .map(categoriaModelAssembler::toModel)
+                .collect(Collectors.toList());
+        return CollectionModel.of(categoriasModel);
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> getCategoriaById(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<Categoria>> getCategoriaById(@PathVariable Long id) {
         return categoriaService.getCategoriaById(id)
+                .map(categoriaModelAssembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
