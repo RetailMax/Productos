@@ -56,4 +56,9 @@ public class CategoriaController {
     public List<Categoria> searchCategorias(@RequestParam("q") String query) {
         return categoriaService.searchCategorias(query);
     }
+
+    @GetMapping("/exists")
+    public boolean existsByName(@RequestParam("name") String name) {
+        return categoriaService.existsByName(name);
+    }
 }

@@ -45,4 +45,8 @@ public class CategoriaService {
     public List<Categoria> searchCategorias(String query) {
         return categoriaRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query);
     }
+
+    public boolean existsByName(String name) {
+        return categoriaRepository.existsByNameIgnoreCase(name);
+    }
 } 
