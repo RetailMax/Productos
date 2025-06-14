@@ -41,4 +41,8 @@ public class CategoriaService {
             .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
         categoriaRepository.delete(categoria);
     }
+
+    public List<Categoria> searchCategorias(String query) {
+        return categoriaRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query);
+    }
 } 

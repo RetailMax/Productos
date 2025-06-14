@@ -51,4 +51,9 @@ public class CategoriaController {
             return ResponseEntity.notFound().build();
         }
     }
-} 
+
+    @GetMapping("/search")
+    public List<Categoria> searchCategorias(@RequestParam("q") String query) {
+        return categoriaService.searchCategorias(query);
+    }
+}
