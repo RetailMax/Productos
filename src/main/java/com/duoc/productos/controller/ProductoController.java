@@ -2,11 +2,14 @@ package com.duoc.productos.controller;
 
 import com.duoc.productos.model.Producto;
 import com.duoc.productos.service.ProductoService;
+import com.duoc.productos.assemblers.ProductoModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/productos")
@@ -16,13 +19,17 @@ public class ProductoController {
     @Autowired
     private ProductoService productoService;
     
+    @Autowired
+    private ProductoModelAssembler productoModelAssembler;
+    
     @GetMapping
-    public Object getProductos(
+    public CollectionModel<EntityModel<Producto>> getProductos(
             @RequestParam(value = "categoria", required = false) Long categoriaId,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sort", required = false) String sort
     ) {
+        List<Producto> productos;
         // Si se solicita paginación
         if (page != null && size != null) {
             org.springframework.data.domain.Pageable pageable;
@@ -35,22 +42,27 @@ public class ProductoController {
                 pageable = org.springframework.data.domain.PageRequest.of(page, size);
             }
             if (categoriaId != null) {
-                return productoService.findByCategoriaPaged(categoriaId, pageable);
+                productos = productoService.findByCategoriaPaged(categoriaId, pageable).getContent();
             } else {
-                return productoService.findAllActivePaged(pageable);
+                productos = productoService.findAllActivePaged(pageable).getContent();
             }
         } else if (categoriaId != null) {
             // Solo filtrar por categoría
-            return productoService.findByCategoria(categoriaId);
+            productos = productoService.findByCategoria(categoriaId);
         } else {
             // Listar todos los productos activos
-            return productoService.findAll().stream().filter(Producto::getIsActive).toList();
+            productos = productoService.findAll().stream().filter(Producto::getIsActive).toList();
         }
+        List<EntityModel<Producto>> productosModel = productos.stream()
+                .map(productoModelAssembler::toModel)
+                .collect(Collectors.toList());
+        return CollectionModel.of(productosModel);
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Producto> getProductoById(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<Producto>> getProductoById(@PathVariable Long id) {
         return productoService.findById(id)
+                .map(productoModelAssembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
