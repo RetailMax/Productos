@@ -51,4 +51,10 @@ public class CategoriaController {
             return ResponseEntity.notFound().build();
         }
     }
+    
+    @GetMapping("/inactivas")
+    public List<Categoria> getCategoriasInactivas() {
+        return categoriaService.getCategoriasInactivas();
+    }
+    
 } 

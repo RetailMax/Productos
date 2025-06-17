@@ -45,4 +45,7 @@ public class Categoria {
             isActive = true;
         }
     }
+    
+    
+
 } 

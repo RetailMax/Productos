@@ -2,8 +2,8 @@ package com.duoc.productos;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+@SpringBootApplication(scanBasePackages = "com.duoc.productos")
 
-@SpringBootApplication
 public class ProductosApplication {
 
 	public static void main(String[] args) {
