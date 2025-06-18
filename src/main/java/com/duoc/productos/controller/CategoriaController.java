@@ -51,7 +51,10 @@ public class CategoriaController {
             return ResponseEntity.notFound().build();
         }
     }
-    
+    @GetMapping("/inactivas")
+    public List<Categoria> getCategoriasInactivas() {
+        return categoriaService.getCategoriasInactivas();
+    }
     @PatchMapping("/{id}/activar")
     public ResponseEntity<Categoria> activarCategoria(@PathVariable Long id) {
         try {
@@ -72,8 +75,9 @@ public class CategoriaController {
         }
     }
     
-    @GetMapping("/inactivas")
-    public List<Categoria> getCategoriasInactivas() {
-        return categoriaService.getCategoriasInactivas();
+    @PostMapping(value = "/lote", consumes = "application/json")
+    public List<Categoria> crearCategoriasEnLote(@RequestBody List<Categoria> categorias) {
+        return categoriaService.crearCategoriasEnLote(categorias);
     }
+    
 } 

@@ -52,4 +52,8 @@ public class CategoriaService {
         return categoriaRepository.save(categoria);
     }
     
+    public List<Categoria> crearCategoriasEnLote(List<Categoria> categorias) {
+        return categoriaRepository.saveAll(categorias);
+    }
+    
 } 
