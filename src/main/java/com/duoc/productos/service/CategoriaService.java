@@ -41,4 +41,15 @@ public class CategoriaService {
             .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
         categoriaRepository.delete(categoria);
     }
+    
+    public List<Categoria> getCategoriasInactivas() {
+        return categoriaRepository.findByIsActiveFalse();
+    }
+    public Categoria activarCategoria(Long id, boolean activar) {
+        Categoria categoria = categoriaRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+        categoria.setIsActive(activar);
+        return categoriaRepository.save(categoria);
+    }
+    
 } 

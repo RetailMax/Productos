@@ -51,4 +51,29 @@ public class CategoriaController {
             return ResponseEntity.notFound().build();
         }
     }
+    
+    @PatchMapping("/{id}/activar")
+    public ResponseEntity<Categoria> activarCategoria(@PathVariable Long id) {
+        try {
+            Categoria categoria = categoriaService.activarCategoria(id, true);
+            return ResponseEntity.ok(categoria);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
+    @PatchMapping("/{id}/desactivar")
+    public ResponseEntity<Categoria> desactivarCategoria(@PathVariable Long id) {
+        try {
+            Categoria categoria = categoriaService.activarCategoria(id, false);
+            return ResponseEntity.ok(categoria);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
+    @GetMapping("/inactivas")
+    public List<Categoria> getCategoriasInactivas() {
+        return categoriaService.getCategoriasInactivas();
+    }
 } 
