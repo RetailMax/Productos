@@ -45,6 +45,9 @@ public class CategoriaService {
     public List<Categoria> getCategoriasInactivas() {
         return categoriaRepository.findByIsActiveFalse();
     }
+    public List<Categoria> getCategoriasActivas() {
+        return categoriaRepository.findByIsActiveTrue();
+    }
     public Categoria activarCategoria(Long id, boolean activar) {
         Categoria categoria = categoriaRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));

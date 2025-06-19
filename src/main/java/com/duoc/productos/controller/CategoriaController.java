@@ -55,6 +55,10 @@ public class CategoriaController {
     public List<Categoria> getCategoriasInactivas() {
         return categoriaService.getCategoriasInactivas();
     }
+    @GetMapping("/activas")
+    public List<Categoria> getCategoriasActivas() {
+        return categoriaService.getCategoriasActivas();
+    }
     @PatchMapping("/{id}/activar")
     public ResponseEntity<Categoria> activarCategoria(@PathVariable Long id) {
         try {
