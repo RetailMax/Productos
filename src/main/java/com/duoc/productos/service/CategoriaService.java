@@ -13,6 +13,11 @@ public class CategoriaService {
     @Autowired
     private CategoriaRepository categoriaRepository;
     
+    // Constructor para tests
+    public CategoriaService(CategoriaRepository categoriaRepository) {
+        this.categoriaRepository = categoriaRepository;
+    }
+    
     public List<Categoria> getAllCategorias() {
         return categoriaRepository.findAll();
     }
@@ -49,4 +54,5 @@ public class CategoriaService {
     public boolean existsByName(String name) {
         return categoriaRepository.existsByNameIgnoreCase(name);
     }
+    
 } 
