@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/categorias")
+@RequestMapping("/api/categorias")
 @CrossOrigin(origins = "*")
 public class CategoriaController {
     
@@ -28,8 +28,9 @@ public class CategoriaController {
     }
     
     @PostMapping(consumes = "application/json")
-    public Categoria createCategoria(@RequestBody Categoria categoria) {
-        return categoriaService.createCategoria(categoria);
+    public ResponseEntity<Categoria> createCategoria(@RequestBody Categoria categoria) {
+        Categoria creada = categoriaService.createCategoria(categoria);
+        return ResponseEntity.status(201).body(creada);
     }
     
     @PutMapping("/{id}")
@@ -58,7 +59,8 @@ public class CategoriaController {
     }
 
     @GetMapping("/exists")
-    public boolean existsByName(@RequestParam("name") String name) {
-        return categoriaService.existsByName(name);
+    public java.util.Map<String, Boolean> existsByName(@RequestParam("name") String name) {
+        boolean exists = categoriaService.existsByName(name);
+        return java.util.Collections.singletonMap("exists", exists);
     }
 }

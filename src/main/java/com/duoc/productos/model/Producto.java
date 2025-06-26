@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Table(name = "producto")
@@ -13,6 +15,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class Producto {
 
     @Id
@@ -35,7 +39,7 @@ public class Producto {
     private String brand;
 
     @NotNull
-    @Positive
+    @Min(0)
     @Column(nullable = false)
     private Integer basePrice;
 

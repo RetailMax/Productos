@@ -5,16 +5,25 @@ import com.duoc.productos.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.validation.Validator;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/productos")
+@RequestMapping("/api/productos")
 @CrossOrigin(origins = "*")
+@Validated
 public class ProductoController {
     
     @Autowired
     private ProductoService productoService;
+    
+    @Autowired(required = false)
+    @Qualifier("mvcValidator")
+    private Validator validator;
     
     @GetMapping
     public Object getProductos(
@@ -56,15 +65,26 @@ public class ProductoController {
     }
     
     @PostMapping(consumes = "application/json")
-    public Producto createProducto(@RequestBody Producto producto) {
-        return productoService.save(producto);
+    public ResponseEntity<Producto> createProducto(@RequestBody @Valid Producto producto) {
+        Producto creado = productoService.save(producto);
+        return ResponseEntity.status(201).body(creado);
     }
     
     @PostMapping(value = "/batch", consumes = "application/json")
-    public List<Producto> createProductos(@RequestBody List<Producto> productos) {
-        return productos.stream()
+    public ResponseEntity<List<Producto>> createProductos(@RequestBody List<@Valid Producto> productos) {
+        if (validator != null) {
+            for (Producto p : productos) {
+                var errors = new org.springframework.validation.BeanPropertyBindingResult(p, "producto");
+                validator.validate(p, errors);
+                if (errors.hasErrors()) {
+                    throw new RuntimeException(new org.springframework.web.bind.MethodArgumentNotValidException(null, errors));
+                }
+            }
+        }
+        List<Producto> creados = productos.stream()
                 .map(productoService::save)
                 .toList();
+        return ResponseEntity.status(201).body(creados);
     }
     
     @PutMapping("/{id}")
@@ -116,7 +136,8 @@ public class ProductoController {
     }
 
     @GetMapping("/exists")
-    public boolean existsByName(@RequestParam("name") String name) {
-        return productoService.existsByName(name);
+    public java.util.Map<String, Boolean> existsByName(@RequestParam("name") String name) {
+        boolean exists = productoService.existsByName(name);
+        return java.util.Collections.singletonMap("exists", exists);
     }
 } 
