@@ -9,6 +9,9 @@ import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.validation.Validator;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import java.util.List;
 
@@ -26,13 +29,13 @@ public class ProductoController {
     private Validator validator;
     
     @GetMapping
-    public Object getProductos(
+    public CollectionModel<EntityModel<Producto>> getProductos(
             @RequestParam(value = "categoria", required = false) Long categoriaId,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sort", required = false) String sort
     ) {
-        // Si se solicita paginación
+        List<Producto> productos;
         if (page != null && size != null) {
             org.springframework.data.domain.Pageable pageable;
             if (sort != null) {
@@ -44,24 +47,36 @@ public class ProductoController {
                 pageable = org.springframework.data.domain.PageRequest.of(page, size);
             }
             if (categoriaId != null) {
-                return productoService.findByCategoriaPaged(categoriaId, pageable);
+                productos = productoService.findByCategoriaPaged(categoriaId, pageable).getContent();
             } else {
-                return productoService.findAllActivePaged(pageable);
+                productos = productoService.findAllActivePaged(pageable).getContent();
             }
         } else if (categoriaId != null) {
-            // Solo filtrar por categoría
-            return productoService.findByCategoria(categoriaId);
+            productos = productoService.findByCategoria(categoriaId);
         } else {
-            // Listar todos los productos activos
-            return productoService.findAll().stream().filter(Producto::getIsActive).toList();
+            productos = productoService.findAll().stream().filter(Producto::getIsActive).toList();
         }
+        List<EntityModel<Producto>> productosModel = productos.stream()
+            .map(producto -> EntityModel.of(producto,
+                linkTo(methodOn(ProductoController.class).getProductoById(producto.getProductId())).withSelfRel(),
+                linkTo(methodOn(ProductoController.class).getProductos(null, null, null, null)).withRel("productos")
+            ))
+            .toList();
+        return CollectionModel.of(productosModel,
+            linkTo(methodOn(ProductoController.class).getProductos(null, null, null, null)).withSelfRel()
+        );
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Producto> getProductoById(@PathVariable Long id) {
+    public EntityModel<Producto> getProductoById(@PathVariable Long id) {
         return productoService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .map(producto -> EntityModel.of(producto,
+                    linkTo(methodOn(ProductoController.class).getProductoById(id)).withSelfRel(),
+                    linkTo(methodOn(ProductoController.class).getProductos(null, null, null, null)).withRel("productos"),
+                    linkTo(methodOn(ProductoController.class).updateProducto(id, producto)).withRel("update"),
+                    linkTo(methodOn(ProductoController.class).deleteProducto(id)).withRel("delete")
+                ))
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND));
     }
     
     @PostMapping(consumes = "application/json")
