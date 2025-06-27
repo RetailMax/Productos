@@ -13,6 +13,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import net.datafaker.Faker;
 
 @SpringBootTest
 @EntityScan(basePackages = "com.duoc.productos.model")
@@ -31,7 +32,17 @@ class CategoriaServiceIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        // categoriaRepository.deleteAll(); // Comentado para evitar error si la tabla no existe
+        categoriaRepository.deleteAll();
+        Faker faker = new Faker();
+        // Insertar 10 categorías aleatorias
+        for (int i = 0; i < 10; i++) {
+            Categoria cat = new Categoria();
+            cat.setName(faker.commerce().department() + " " + faker.number().randomDigit());
+            cat.setDescription(faker.lorem().sentence());
+            cat.setIsActive(faker.bool().bool());
+            categoriaRepository.save(cat);
+        }
+        // Insertar una categoría conocida para los tests específicos
         categoria = new Categoria();
         categoria.setName("Tecnología");
         categoria.setDescription("Productos tecnológicos");
