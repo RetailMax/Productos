@@ -185,4 +185,9 @@ class ProductosApplicationTests {
 		assertNotNull(categoria.getCreatedAt());
 	}
 
+	@Test
+	void mainRuns() {
+		ProductosApplication.main(new String[] {});
+	}
+
 }
