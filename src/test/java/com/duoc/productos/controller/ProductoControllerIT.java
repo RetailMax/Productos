@@ -58,7 +58,7 @@ class ProductoControllerIT {
     void testGetProductos() throws Exception {
         mockMvc.perform(get("/api/productos"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").exists());
+                .andExpect(jsonPath("$._embedded.productoList[0].name").exists());
     }
 
     @Test
