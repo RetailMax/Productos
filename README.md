@@ -11,3 +11,6 @@
 ```
 docker compose up
 ```
+
+
+E:\CODE\LEARNING\DUOC - ANALISTA PROGRAMADOR\FULL STACK\Fullstack - Productos\Productos\target\site\jacoco\index.html
