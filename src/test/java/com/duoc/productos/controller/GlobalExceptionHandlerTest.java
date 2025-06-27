@@ -12,6 +12,7 @@ import org.springframework.validation.FieldError;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("unit")
 class GlobalExceptionHandlerTest {

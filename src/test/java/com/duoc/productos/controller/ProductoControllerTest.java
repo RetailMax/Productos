@@ -392,4 +392,31 @@ class ProductoControllerTest {
         mockMvc.perform(get("/api/productos").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void testCreateProductos_batchValido() throws Exception {
+        Producto producto = new Producto();
+        producto.setName("BatchProd");
+        producto.setDescription("DescBatch");
+        producto.setBrand("MarcaBatch");
+        producto.setBasePrice(150);
+        producto.setIsActive(true);
+        List<Producto> productos = List.of(producto);
+        Mockito.when(productoService.save(Mockito.any(Producto.class))).thenReturn(producto);
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/productos/batch")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(productos)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$[0].name").value("BatchProd"));
+    }
+
+    @Test
+    void testCreateProductos_batchVacio() throws Exception {
+        List<Producto> productos = List.of();
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/productos/batch")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(productos)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$").isEmpty());
+    }
 } 

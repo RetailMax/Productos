@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @WebMvcTest(CategoriaController.class)
 @ActiveProfiles("test")
@@ -121,5 +123,83 @@ class CategoriaControllerTest {
                 .param("name", "NoExiste"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.exists").value(false));
+    }
+
+    @Test
+    void testUpdateCategoria_success() throws Exception {
+        Categoria categoria = new Categoria();
+        categoria.setCategoriaId(1L);
+        categoria.setName("Cat");
+        categoria.setDescription("Desc");
+        categoria.setIsActive(true);
+        Mockito.when(categoriaService.updateCategoria(Mockito.eq(1L), Mockito.any(Categoria.class))).thenReturn(categoria);
+        mockMvc.perform(put("/api/categorias/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(categoria)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Cat"));
+    }
+
+    @Test
+    void testUpdateCategoria_notFound() throws Exception {
+        Categoria categoria = new Categoria();
+        categoria.setName("Cat");
+        categoria.setDescription("Desc");
+        categoria.setIsActive(true);
+        Mockito.when(categoriaService.updateCategoria(Mockito.eq(99L), Mockito.any(Categoria.class))).thenThrow(new RuntimeException());
+        mockMvc.perform(put("/api/categorias/99")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(categoria)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testDeleteCategoria_success() throws Exception {
+        Mockito.doNothing().when(categoriaService).deleteCategoria(1L);
+        mockMvc.perform(delete("/api/categorias/1"))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void testDeleteCategoria_notFound() throws Exception {
+        Mockito.doThrow(new RuntimeException()).when(categoriaService).deleteCategoria(99L);
+        mockMvc.perform(delete("/api/categorias/99"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testExistsByName_true() throws Exception {
+        Mockito.when(categoriaService.existsByName("Cat")).thenReturn(true);
+        mockMvc.perform(get("/api/categorias/exists?name=Cat").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.exists").value(true));
+    }
+
+    @Test
+    void testExistsByName_false() throws Exception {
+        Mockito.when(categoriaService.existsByName("NoExiste")).thenReturn(false);
+        mockMvc.perform(get("/api/categorias/exists?name=NoExiste").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.exists").value(false));
+    }
+
+    @Test
+    void testGetCategoriaById_success() throws Exception {
+        Categoria categoria = new Categoria();
+        categoria.setCategoriaId(1L);
+        categoria.setName("Cat");
+        categoria.setDescription("Desc");
+        categoria.setIsActive(true);
+        Mockito.when(categoriaService.getCategoriaById(1L)).thenReturn(Optional.of(categoria));
+        mockMvc.perform(get("/api/categorias/1").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Cat"));
+    }
+
+    @Test
+    void testGetCategoriaById_notFound() throws Exception {
+        Mockito.when(categoriaService.getCategoriaById(99L)).thenReturn(Optional.empty());
+        mockMvc.perform(get("/api/categorias/99").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 } 
