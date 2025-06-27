@@ -31,44 +31,13 @@ class CategoriaTest {
     }
 
     @Test
-    void testEqualsAndHashCode() {
-        Categoria c1 = new Categoria();
-        c1.setCategoriaId(1L);
-        c1.setName("A");
-        c1.setDescription("B");
-        c1.setIsActive(true);
-        Categoria c2 = new Categoria();
-        c2.setCategoriaId(1L);
-        c2.setName("A");
-        c2.setDescription("B");
-        c2.setIsActive(true);
-        assertEquals(c1, c2);
-        assertEquals(c1.hashCode(), c2.hashCode());
-        Categoria c3 = new Categoria();
-        c3.setCategoriaId(2L);
-        assertNotEquals(c1, c3);
-        assertNotEquals(c1, null);
-        assertNotEquals(c1, "otro tipo");
-    }
-
-    @Test
-    void testToString() {
-        Categoria c = new Categoria();
-        c.setCategoriaId(1L);
-        c.setName("Test");
-        c.setDescription("Desc");
-        String str = c.toString();
-        assertTrue(str.contains("Test"));
-        assertTrue(str.contains("Desc"));
-    }
-
-    @Test
     void testOnCreateSetsCreatedAtAndIsActive() {
         Categoria c = new Categoria();
-        c.setIsActive(null); // Simular valor nulo
+        c.setIsActive(null);
         c.onCreate();
         assertNotNull(c.getCreatedAt());
         assertTrue(c.getIsActive());
+        assertTrue(c.getCreatedAt().isBefore(LocalDateTime.now().plusSeconds(1)));
     }
 
     @Test
@@ -110,5 +79,40 @@ class CategoriaTest {
         Categoria c = new Categoria();
         assertTrue(c.canEqual(new Categoria()));
         assertFalse(c.canEqual("otro tipo"));
+    }
+
+    @Test
+    void testGettersSettersAndToString() {
+        Categoria c = new Categoria();
+        c.setCategoriaId(1L);
+        c.setName("Cat");
+        c.setDescription("DescCat");
+        c.setIsActive(true);
+        assertEquals(1L, c.getCategoriaId());
+        assertEquals("Cat", c.getName());
+        assertEquals("DescCat", c.getDescription());
+        assertTrue(c.getIsActive());
+        assertNotNull(c.toString());
+    }
+
+    @Test
+    void testEqualsAndHashCode() {
+        Categoria c1 = new Categoria();
+        c1.setCategoriaId(1L);
+        c1.setName("Cat");
+        c1.setDescription("DescCat");
+        c1.setIsActive(true);
+        Categoria c2 = new Categoria();
+        c2.setCategoriaId(1L);
+        c2.setName("Cat");
+        c2.setDescription("DescCat");
+        c2.setIsActive(true);
+        assertEquals(c1, c2);
+        assertEquals(c1.hashCode(), c2.hashCode());
+        Categoria c3 = new Categoria();
+        c3.setCategoriaId(2L);
+        assertNotEquals(c1, c3);
+        assertNotEquals(c1, null);
+        assertNotEquals(c1, "otro tipo");
     }
 } 

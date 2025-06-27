@@ -15,23 +15,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("unit")
 class GlobalExceptionHandlerTest {
-    GlobalExceptionHandler handler = new GlobalExceptionHandler();
+    private final GlobalExceptionHandler handler = new GlobalExceptionHandler();
 
     @Test
     void testHandleValidationExceptions() {
-        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(new Object(), "obj");
-        errors.addError(new FieldError("obj", "campo", "mensaje"));
-        MethodArgumentNotValidException ex = new MethodArgumentNotValidException(null, errors);
-        ResponseEntity<Map<String, String>> resp = handler.handleValidationExceptions(ex);
-        assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
-        assertTrue(resp.getBody().containsKey("campo"));
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(new Object(), "producto");
+        bindingResult.addError(new FieldError("producto", "name", "no puede estar vacío"));
+        MethodArgumentNotValidException ex = new MethodArgumentNotValidException(null, bindingResult);
+        ResponseEntity<Map<String, String>> response = handler.handleValidationExceptions(ex);
+        assertEquals(400, response.getStatusCodeValue());
+        assertTrue(response.getBody().containsKey("name"));
     }
 
     @Test
     void testHandleDataIntegrityViolation() {
         DataIntegrityViolationException ex = new DataIntegrityViolationException("error", new RuntimeException("detalle"));
-        ResponseEntity<Map<String, String>> resp = handler.handleDataIntegrityViolation(ex);
-        assertEquals(HttpStatus.BAD_REQUEST, resp.getStatusCode());
-        assertTrue(resp.getBody().get("error").contains("integridad"));
+        ResponseEntity<Map<String, String>> response = handler.handleDataIntegrityViolation(ex);
+        assertEquals(400, response.getStatusCodeValue());
+        assertTrue(response.getBody().get("error").contains("Error de integridad de datos"));
     }
 } 
