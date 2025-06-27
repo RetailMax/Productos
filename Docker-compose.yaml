@@ -1,5 +1,17 @@
 version: '3.8'
 services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin123
+      - MYSQL_DATABASE=productosdb
+      - MYSQL_USER=productos
+      - MYSQL_PASSWORD=productos123
+    ports:
+      - "3306:3306"
+    networks:
+      - backend
+
   productos:
     build:
       context: ../Productos
@@ -9,11 +21,13 @@ services:
       - ./wallet:/app/wallet
     environment:
       - SPRING_APPLICATION_NAME=productos
-      - SPRING_DATASOURCE_URL=jdbc:oracle:thin:@kgrasril5bsgzi0i_high?TNS_ADMIN=/app/wallet
-      - SPRING_DATASOURCE_USERNAME=ADMIN
-      - SPRING_DATASOURCE_PASSWORD=FullStack-001
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/productosdb
+      - SPRING_DATASOURCE_USERNAME=productos
+      - SPRING_DATASOURCE_PASSWORD=productos123
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.OracleDialect
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
+    depends_on:
+      - mysql
     networks:
       - backend
 
