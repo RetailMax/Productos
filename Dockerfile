@@ -6,8 +6,8 @@ RUN mvn clean package -DskipTests
 
 FROM openjdk:21-jdk-slim
 WORKDIR /app
-RUN 
 COPY --from=build /app/target/*.jar app.jar
+COPY wallet /app/wallet
 
 ENV TNS_ADMIN=/app/wallet
 

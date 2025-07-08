@@ -2,6 +2,7 @@ package com.duoc.productos.controller;
 
 import com.duoc.productos.model.Categoria;
 import com.duoc.productos.service.CategoriaService;
+import com.duoc.productos.assembler.CategoriaModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,9 @@ public class CategoriaController {
     
     @Autowired
     private CategoriaService categoriaService;
+    
+    @Autowired
+    private CategoriaModelAssembler categoriaModelAssembler;
     
     @GetMapping
     public List<Categoria> getAllCategorias() {

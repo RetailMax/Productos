@@ -90,7 +90,6 @@
 			<groupId>net.bytebuddy</groupId>
 			<artifactId>byte-buddy</artifactId>
 			<version>1.14.13</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.datafaker</groupId>

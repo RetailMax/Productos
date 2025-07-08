@@ -12,6 +12,7 @@ import org.springframework.validation.Validator;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.CollectionModel;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import com.duoc.productos.assembler.ProductoModelAssembler;
 
 import java.util.List;
 
@@ -27,6 +28,9 @@ public class ProductoController {
     @Autowired(required = false)
     @Qualifier("mvcValidator")
     private Validator validator;
+    
+    @Autowired
+    private ProductoModelAssembler productoModelAssembler;
     
     @GetMapping
     public CollectionModel<EntityModel<Producto>> getProductos(
@@ -57,10 +61,7 @@ public class ProductoController {
             productos = productoService.findAll().stream().filter(Producto::getIsActive).toList();
         }
         List<EntityModel<Producto>> productosModel = productos.stream()
-            .map(producto -> EntityModel.of(producto,
-                linkTo(methodOn(ProductoController.class).getProductoById(producto.getProductId())).withSelfRel(),
-                linkTo(methodOn(ProductoController.class).getProductos(null, null, null, null)).withRel("productos")
-            ))
+            .map(productoModelAssembler::toModel)
             .toList();
         return CollectionModel.of(productosModel,
             linkTo(methodOn(ProductoController.class).getProductos(null, null, null, null)).withSelfRel()
@@ -70,12 +71,7 @@ public class ProductoController {
     @GetMapping("/{id}")
     public EntityModel<Producto> getProductoById(@PathVariable Long id) {
         return productoService.findById(id)
-                .map(producto -> EntityModel.of(producto,
-                    linkTo(methodOn(ProductoController.class).getProductoById(id)).withSelfRel(),
-                    linkTo(methodOn(ProductoController.class).getProductos(null, null, null, null)).withRel("productos"),
-                    linkTo(methodOn(ProductoController.class).updateProducto(id, producto)).withRel("update"),
-                    linkTo(methodOn(ProductoController.class).deleteProducto(id)).withRel("delete")
-                ))
+                .map(productoModelAssembler::toModel)
                 .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND));
     }
     
