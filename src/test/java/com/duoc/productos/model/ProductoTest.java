@@ -76,7 +76,7 @@ class ProductoTest {
     void testConstructorCompleto() {
         LocalDateTime fecha = LocalDateTime.now();
         Categoria cat = new Categoria();
-        Producto p = new Producto(1L, "A", "B", "C", 10, true, fecha, cat);
+        Producto p = new Producto(1L, "A", "B", "C", 10, true, null, fecha, cat);
         assertEquals(1L, p.getProductId());
         assertEquals("A", p.getName());
         assertEquals("B", p.getDescription());
@@ -91,9 +91,9 @@ class ProductoTest {
     void testEqualsAndHashCode_variosCasos() {
         Categoria cat = new Categoria();
         LocalDateTime fecha = LocalDateTime.now();
-        Producto p1 = new Producto(1L, "A", "B", "C", 10, true, fecha, cat);
-        Producto p2 = new Producto(1L, "A", "B", "C", 10, true, fecha, cat);
-        Producto p3 = new Producto(2L, "X", "Y", "Z", 20, false, fecha, null);
+        Producto p1 = new Producto(1L, "A", "B", "C", 10, true, null, fecha, cat);
+        Producto p2 = new Producto(1L, "A", "B", "C", 10, true, null, fecha, cat);
+        Producto p3 = new Producto(2L, "X", "Y", "Z", 20, false, null, fecha, null);
         assertEquals(p1, p2);
         assertEquals(p1.hashCode(), p2.hashCode());
         assertNotEquals(p1, p3);
@@ -103,8 +103,8 @@ class ProductoTest {
 
     @Test
     void testEqualsWithNullFields() {
-        Producto p1 = new Producto(null, null, null, null, null, null, null, null);
-        Producto p2 = new Producto(null, null, null, null, null, null, null, null);
+        Producto p1 = new Producto(null, null, null, null, null, null, null, null, null);
+        Producto p2 = new Producto(null, null, null, null, null, null, null, null, null);
         assertEquals(p1, p2);
         assertEquals(p1.hashCode(), p2.hashCode());
     }

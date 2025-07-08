@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - Visual Cards</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .product-card img {
+            object-fit: cover;
+            height: 200px;
+            width: 100%;
+        }
+        .category-badge {
+            font-size: 0.9em;
+            margin-bottom: 0.5em;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 shadow-sm">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+          <img src="retailmax.png" alt="RetailMax" width="60" height="60" class="me-2" style="object-fit:contain;">
+          <span class="fw-bold">RetailMax</span>
+        </a>
+      </div>
+    </nav>
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3">Catálogo de Productos</h1>
+            <div>
+                <button id="addCategoriaBtn" class="btn btn-success me-2">Agregar categoría</button>
+                <button id="addProductoBtn" class="btn btn-warning me-2">Agregar producto</button>
+                <button id="reloadBtn" class="btn btn-primary">Recargar productos</button>
+            </div>
+        </div>
+        <!-- Sección de categorías -->
+        <h2 class="h5 mb-3">Categorías</h2>
+        <div id="categoriasRow" class="row g-3 mb-4">
+            <!-- Aquí se insertarán las cards de categorías -->
+        </div>
+        <!-- Modal Agregar Categoría -->
+        <div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalCategoriaLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalCategoriaLabel">Agregar nueva categoría</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+              <form id="formCategoria">
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label for="catName" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="catName" required maxlength="100">
+                  </div>
+                  <div class="mb-3">
+                    <label for="catDesc" class="form-label">Descripción</label>
+                    <input type="text" class="form-control" id="catDesc" required maxlength="500">
+                  </div>
+                  <div class="mb-3">
+                    <label for="catImg" class="form-label">URL de imagen (opcional)</label>
+                    <input type="url" class="form-control" id="catImg" maxlength="500">
+                  </div>
+                  <div id="catMsg" class="alert d-none" role="alert"></div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn btn-success">Agregar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- Modal Agregar Producto -->
+        <div class="modal fade" id="modalProducto" tabindex="-1" aria-labelledby="modalProductoLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalProductoLabel">Agregar nuevo producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+              <form id="formProducto">
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label for="prodName" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="prodName" required maxlength="100">
+                  </div>
+                  <div class="mb-3">
+                    <label for="prodDesc" class="form-label">Descripción</label>
+                    <input type="text" class="form-control" id="prodDesc" required maxlength="500">
+                  </div>
+                  <div class="mb-3">
+                    <label for="prodBrand" class="form-label">Marca</label>
+                    <input type="text" class="form-control" id="prodBrand" required maxlength="50">
+                  </div>
+                  <div class="mb-3">
+                    <label for="prodPrice" class="form-label">Precio</label>
+                    <input type="number" class="form-control" id="prodPrice" required min="0">
+                  </div>
+                  <div class="mb-3">
+                    <label for="prodCat" class="form-label">Categoría</label>
+                    <select class="form-select" id="prodCat" required></select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="prodImg" class="form-label">URL de imagen (opcional)</label>
+                    <input type="url" class="form-control" id="prodImg" maxlength="500">
+                  </div>
+                  <div id="prodMsg" class="alert d-none" role="alert"></div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn btn-warning">Agregar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div id="productsRow" class="row g-4">
+            <!-- Aquí se insertarán las cards de productos -->
+        </div>
+        <div id="noProductsMsg" class="alert alert-info mt-4 d-none">No hay productos para mostrar.</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = '/api';
+        const DEFAULT_IMAGE = 'https://via.placeholder.com/300x200?text=Sin+Imagen';
+        let categorias = {};
+
+        // Cargar categorías para mapear nombre e imagen
+        async function fetchCategorias() {
+            const res = await fetch(`${API_BASE}/categorias`);
+            const data = await res.json();
+            categorias = {};
+            data.forEach(cat => {
+                categorias[cat.categoriaId] = cat;
+            });
+        }
+
+        // Cargar productos y renderizar cards
+        async function fetchProductos() {
+            const res = await fetch(`${API_BASE}/productos`);
+            const data = await res.json();
+            renderProductos(data._embedded ? data._embedded.productoList : data);
+        }
+
+        function renderProductos(productos) {
+            // Asegura que productos sea siempre un array
+            if (!Array.isArray(productos)) {
+                if (productos && productos._embedded && Array.isArray(productos._embedded.productoList)) {
+                    productos = productos._embedded.productoList;
+                } else {
+                    productos = [];
+                }
+            }
+            const row = document.getElementById('productsRow');
+            const noMsg = document.getElementById('noProductsMsg');
+            row.innerHTML = '';
+            if (!productos || productos.length === 0) {
+                noMsg.classList.remove('d-none');
+                return;
+            }
+            noMsg.classList.add('d-none');
+            productos.forEach(prod => {
+                // Corregir obtención de categoría
+                const cat = prod.categoria ? categorias[prod.categoria.categoriaId] : {};
+                const card = document.createElement('div');
+                card.className = 'col-12 col-sm-6 col-md-4 col-lg-3';
+                // Formatear precio con separador de miles (punto)
+                const precioFormateado = prod.basePrice != null ? prod.basePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : '0';
+                card.innerHTML = `
+                    <div class="card product-card h-100 shadow-sm">
+                        <img src="${prod.imageUrl || DEFAULT_IMAGE}" class="card-img-top" alt="Imagen producto">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">${prod.name}</h5>
+                            <p class="card-text mb-1">${prod.description || ''}</p>
+                            <span class="badge bg-secondary category-badge">
+                                ${cat && cat.imageUrl ? `<img src='${cat.imageUrl}' alt='cat' style='height:1.5em;width:1.5em;object-fit:cover;border-radius:50%;margin-right:0.3em;'>` : ''}
+                                ${cat && cat.name ? cat.name : 'Sin categoría'}
+                            </span>
+                            <div class="mt-auto">
+                                <div class="fw-bold">$${precioFormateado}</div>
+                                <div class="text-muted small">Marca: ${prod.brand || '-'}</div>
+                                <div class="text-${prod.isActive ? 'success' : 'danger'} small">${prod.isActive ? 'Activo' : 'Inactivo'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                row.appendChild(card);
+            });
+        }
+
+        // Renderizar categorías
+        function renderCategorias(categoriasList) {
+            const row = document.getElementById('categoriasRow');
+            row.innerHTML = '';
+            if (!categoriasList || categoriasList.length === 0) {
+                row.innerHTML = '<div class="col-12"><div class="alert alert-info">No hay categorías para mostrar.</div></div>';
+                return;
+            }
+            categoriasList.forEach(cat => {
+                const card = document.createElement('div');
+                card.className = 'col-12 col-sm-6 col-md-4 col-lg-3';
+                card.innerHTML = `
+                    <div class="card h-100 shadow-sm">
+                        <img src="${cat.imageUrl || DEFAULT_IMAGE}" class="card-img-top" alt="Imagen categoría" style="object-fit:cover;height:120px;">
+                        <div class="card-body">
+                            <h5 class="card-title">${cat.name}</h5>
+                            <p class="card-text">${cat.description || ''}</p>
+                            <div class="d-flex justify-content-end gap-2 mt-2">
+                                <button class="btn btn-sm btn-outline-primary btn-edit-cat" data-id="${cat.categoriaId}">Editar</button>
+                                <button class="btn btn-sm btn-outline-danger btn-del-cat" data-id="${cat.categoriaId}">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                row.appendChild(card);
+            });
+            // Asignar eventos a los botones de editar y eliminar
+            row.querySelectorAll('.btn-edit-cat').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = btn.getAttribute('data-id');
+                    setCatMsg('', '');
+                    // Consultar la categoría por la API
+                    try {
+                        const res = await fetch(`${API_BASE}/categorias/${id}`);
+                        if (!res.ok) throw new Error('No se pudo obtener la categoría');
+                        const cat = await res.json();
+                        document.getElementById('catName').value = cat.name;
+                        document.getElementById('catDesc').value = cat.description;
+                        document.getElementById('catImg').value = cat.imageUrl || '';
+                        document.getElementById('formCategoria').setAttribute('data-edit-id', id);
+                        modalCategoria.show();
+                    } catch (err) {
+                        setCatMsg('Error: ' + err.message, 'danger');
+                        modalCategoria.show();
+                    }
+                });
+            });
+            row.querySelectorAll('.btn-del-cat').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = btn.getAttribute('data-id');
+                    if (!confirm('¿Seguro que deseas eliminar esta categoría?')) return;
+                    try {
+                        const res = await fetch(`${API_BASE}/categorias/${id}`, { method: 'DELETE' });
+                        if (!res.ok) throw new Error('No se pudo eliminar la categoría');
+                        await cargarTodo();
+                    } catch (err) {
+                        alert('Error: ' + err.message);
+                    }
+                });
+            });
+        }
+
+        async function cargarTodo() {
+            await fetchCategorias();
+            await fetchProductos();
+            renderCategorias(Object.values(categorias));
+        }
+
+        document.getElementById('reloadBtn').addEventListener('click', cargarTodo);
+        window.addEventListener('DOMContentLoaded', cargarTodo);
+
+        // Modal y formulario de categoría
+        const modalCategoria = new bootstrap.Modal(document.getElementById('modalCategoria'));
+        // Modificar el submit del formCategoria para soportar edición
+        document.getElementById('formCategoria').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            setCatMsg('', '');
+            const nombre = document.getElementById('catName').value.trim();
+            const desc = document.getElementById('catDesc').value.trim();
+            const img = document.getElementById('catImg').value.trim();
+            const editId = document.getElementById('formCategoria').getAttribute('data-edit-id');
+            try {
+                let res;
+                if (editId) {
+                    // Edición
+                    res = await fetch(`${API_BASE}/categorias/${editId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: nombre, description: desc, imageUrl: img || null })
+                    });
+                } else {
+                    // Creación
+                    res = await fetch(`${API_BASE}/categorias`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: nombre, description: desc, imageUrl: img || null })
+                    });
+                }
+                if (!res.ok) throw new Error(editId ? 'Error al editar categoría' : 'Error al crear categoría');
+                setCatMsg(editId ? '¡Categoría editada exitosamente!' : '¡Categoría creada exitosamente!', 'success');
+                await cargarTodo();
+                setTimeout(() => { modalCategoria.hide(); }, 1000);
+            } catch (err) {
+                setCatMsg('Error: ' + err.message, 'danger');
+            } finally {
+                document.getElementById('formCategoria').removeAttribute('data-edit-id');
+            }
+        });
+        // Al abrir el modal para crear, limpiar el atributo de edición
+        document.getElementById('addCategoriaBtn').addEventListener('click', () => {
+            document.getElementById('formCategoria').reset();
+            setCatMsg('', '');
+            document.getElementById('formCategoria').removeAttribute('data-edit-id');
+            modalCategoria.show();
+        });
+        function setCatMsg(msg, type) {
+            const el = document.getElementById('catMsg');
+            if (!msg) { el.className = 'alert d-none'; el.textContent = ''; return; }
+            el.className = 'alert alert-' + type; el.textContent = msg;
+        }
+
+        // Modal y formulario de producto
+        const modalProducto = new bootstrap.Modal(document.getElementById('modalProducto'));
+        document.getElementById('addProductoBtn').addEventListener('click', () => {
+            document.getElementById('formProducto').reset();
+            setProdMsg('', '');
+            cargarCategoriasDropdown();
+            modalProducto.show();
+        });
+        function setProdMsg(msg, type) {
+            const el = document.getElementById('prodMsg');
+            if (!msg) { el.className = 'alert d-none'; el.textContent = ''; return; }
+            el.className = 'alert alert-' + type; el.textContent = msg;
+        }
+        async function cargarCategoriasDropdown() {
+            // Solo categorías activas
+            const res = await fetch(`${API_BASE}/categorias`);
+            const data = await res.json();
+            const select = document.getElementById('prodCat');
+            select.innerHTML = '';
+            (data.filter ? data.filter(c => c.isActive !== false) : data).forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat.categoriaId;
+                opt.textContent = cat.name;
+                select.appendChild(opt);
+            });
+        }
+        document.getElementById('formProducto').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            setProdMsg('', '');
+            const nombre = document.getElementById('prodName').value.trim();
+            const desc = document.getElementById('prodDesc').value.trim();
+            const brand = document.getElementById('prodBrand').value.trim();
+            const price = parseInt(document.getElementById('prodPrice').value, 10);
+            const catId = document.getElementById('prodCat').value;
+            const img = document.getElementById('prodImg').value.trim();
+            try {
+                const res = await fetch(`${API_BASE}/productos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: nombre, description: desc, brand: brand, basePrice: price, imageUrl: img || null, categoria: { categoriaId: catId } })
+                });
+                if (!res.ok) throw new Error('Error al crear producto');
+                setProdMsg('¡Producto creado exitosamente!', 'success');
+                await cargarTodo();
+                setTimeout(() => { modalProducto.hide(); }, 1000);
+            } catch (err) {
+                setProdMsg('Error: ' + err.message, 'danger');
+            }
+        });
+    </script>
+</body>
+</html> 
