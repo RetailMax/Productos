@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Productos - Visual Cards</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .product-card img {
             object-fit: cover;
@@ -21,7 +23,7 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 shadow-sm">
       <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="#">
-          <img src="retailmax.png" alt="RetailMax" width="60" height="60" class="me-2" style="object-fit:contain;">
+          <img src="retailmax.png" alt="RetailMax" width="80" height="80" class="me-2" style="object-fit:contain;">
           <span class="fw-bold">RetailMax</span>
         </a>
       </div>
@@ -30,9 +32,15 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3">Catálogo de Productos</h1>
             <div>
-                <button id="addCategoriaBtn" class="btn btn-success me-2">Agregar categoría</button>
-                <button id="addProductoBtn" class="btn btn-warning me-2">Agregar producto</button>
-                <button id="reloadBtn" class="btn btn-primary">Recargar productos</button>
+                <button id="addCategoriaBtn" class="btn btn-success me-2">
+                    <i class="bi bi-tags-fill me-1"></i>Agregar categoría
+                </button>
+                <button id="addProductoBtn" class="btn btn-warning me-2">
+                    <i class="bi bi-box-seam me-1"></i>Agregar producto
+                </button>
+                <button id="batchBtn" class="btn btn-info">
+                    <i class="bi bi-upload me-1"></i>Carga batch
+                </button>
             </div>
         </div>
         <!-- Sección de categorías -->
@@ -116,6 +124,34 @@
             </div>
           </div>
         </div>
+        <!-- Modal Carga Batch -->
+        <div class="modal fade" id="modalBatch" tabindex="-1" aria-labelledby="modalBatchLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalBatchLabel">Carga batch de productos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+              <form id="formBatch">
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label for="batchJson" class="form-label">Pega aquí el JSON (array de productos)</label>
+                    <textarea class="form-control" id="batchJson" rows="8" required placeholder='[
+  { "name": "...", ... },
+  ...
+]'></textarea>
+                  </div>
+                  <div id="batchMsg" class="alert d-none" role="alert"></div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn btn-info">Cargar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <h2 class="h5 mb-3">Productos</h2>
         <div id="productsRow" class="row g-4">
             <!-- Aquí se insertarán las cards de productos -->
         </div>
@@ -183,11 +219,62 @@
                                 <div class="fw-bold">$${precioFormateado}</div>
                                 <div class="text-muted small">Marca: ${prod.brand || '-'}</div>
                                 <div class="text-${prod.isActive ? 'success' : 'danger'} small">${prod.isActive ? 'Activo' : 'Inactivo'}</div>
+                                <div class="d-flex justify-content-end gap-2 mt-2">
+                                    <button class="btn btn-sm btn-outline-primary btn-edit-prod" data-id="${prod.productId}"><i class="bi bi-pencil"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger btn-del-prod" data-id="${prod.productId}"><i class="bi bi-trash"></i></button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 `;
                 row.appendChild(card);
+            });
+            // Asignar eventos a los botones de editar y eliminar producto después de renderizar las cards
+            row.querySelectorAll('.btn-edit-prod').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = btn.getAttribute('data-id');
+                    setProdMsg('', '');
+                    try {
+                        const res = await fetch(`${API_BASE}/productos/${id}`);
+                        if (!res.ok) throw new Error('No se pudo obtener el producto');
+                        const prod = await res.json();
+                        document.getElementById('prodName').value = prod.name;
+                        document.getElementById('prodDesc').value = prod.description;
+                        document.getElementById('prodBrand').value = prod.brand;
+                        document.getElementById('prodPrice').value = prod.basePrice;
+                        document.getElementById('prodImg').value = prod.imageUrl || '';
+                        await cargarCategoriasDropdown();
+                        document.getElementById('prodCat').value = prod.categoria && prod.categoria.categoriaId ? prod.categoria.categoriaId : '';
+                        document.getElementById('formProducto').setAttribute('data-edit-id', id);
+                        modalProducto.show();
+                    } catch (err) {
+                        setProdMsg('Error: ' + err.message, 'danger');
+                        modalProducto.show();
+                    }
+                });
+            });
+            row.querySelectorAll('.btn-del-prod').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = btn.getAttribute('data-id');
+                    const result = await Swal.fire({
+                        title: '¿Eliminar producto?',
+                        text: 'Esta acción no se puede deshacer.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar',
+                        reverseButtons: true
+                    });
+                    if (!result.isConfirmed) return;
+                    try {
+                        const res = await fetch(`${API_BASE}/productos/${id}`, { method: 'DELETE' });
+                        if (!res.ok) throw new Error('No se pudo eliminar el producto');
+                        await cargarTodo();
+                        await Swal.fire('¡Eliminado!', 'El producto fue eliminado correctamente.', 'success');
+                    } catch (err) {
+                        await Swal.fire('Error', err.message, 'error');
+                    }
+                });
             });
         }
 
@@ -209,8 +296,8 @@
                             <h5 class="card-title">${cat.name}</h5>
                             <p class="card-text">${cat.description || ''}</p>
                             <div class="d-flex justify-content-end gap-2 mt-2">
-                                <button class="btn btn-sm btn-outline-primary btn-edit-cat" data-id="${cat.categoriaId}">Editar</button>
-                                <button class="btn btn-sm btn-outline-danger btn-del-cat" data-id="${cat.categoriaId}">Eliminar</button>
+                                <button class="btn btn-sm btn-outline-primary btn-edit-cat" data-id="${cat.categoriaId}"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-sm btn-outline-danger btn-del-cat" data-id="${cat.categoriaId}"><i class="bi bi-trash"></i></button>
                             </div>
                         </div>
                     </div>
@@ -241,13 +328,23 @@
             row.querySelectorAll('.btn-del-cat').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const id = btn.getAttribute('data-id');
-                    if (!confirm('¿Seguro que deseas eliminar esta categoría?')) return;
+                    const result = await Swal.fire({
+                        title: '¿Eliminar categoría?',
+                        text: 'Esta acción no se puede deshacer.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar',
+                        reverseButtons: true
+                    });
+                    if (!result.isConfirmed) return;
                     try {
                         const res = await fetch(`${API_BASE}/categorias/${id}`, { method: 'DELETE' });
                         if (!res.ok) throw new Error('No se pudo eliminar la categoría');
                         await cargarTodo();
+                        await Swal.fire('¡Eliminado!', 'La categoría fue eliminada correctamente.', 'success');
                     } catch (err) {
-                        alert('Error: ' + err.message);
+                        await Swal.fire('Error', err.message, 'error');
                     }
                 });
             });
@@ -259,8 +356,23 @@
             renderCategorias(Object.values(categorias));
         }
 
-        document.getElementById('reloadBtn').addEventListener('click', cargarTodo);
-        window.addEventListener('DOMContentLoaded', cargarTodo);
+        document.getElementById('addCategoriaBtn').addEventListener('click', () => {
+            document.getElementById('formCategoria').reset();
+            setCatMsg('', '');
+            document.getElementById('formCategoria').removeAttribute('data-edit-id');
+            modalCategoria.show();
+        });
+        document.getElementById('addProductoBtn').addEventListener('click', () => {
+            document.getElementById('formProducto').reset();
+            setProdMsg('', '');
+            cargarCategoriasDropdown();
+            modalProducto.show();
+        });
+        document.getElementById('batchBtn').addEventListener('click', () => {
+            document.getElementById('formBatch').reset();
+            setBatchMsg('', '');
+            modalBatch.show();
+        });
 
         // Modal y formulario de categoría
         const modalCategoria = new bootstrap.Modal(document.getElementById('modalCategoria'));
@@ -290,11 +402,11 @@
                     });
                 }
                 if (!res.ok) throw new Error(editId ? 'Error al editar categoría' : 'Error al crear categoría');
-                setCatMsg(editId ? '¡Categoría editada exitosamente!' : '¡Categoría creada exitosamente!', 'success');
                 await cargarTodo();
+                await Swal.fire('¡Éxito!', editId ? 'Categoría editada exitosamente.' : 'Categoría creada exitosamente.', 'success');
                 setTimeout(() => { modalCategoria.hide(); }, 1000);
             } catch (err) {
-                setCatMsg('Error: ' + err.message, 'danger');
+                await Swal.fire('Error', err.message, 'error');
             } finally {
                 document.getElementById('formCategoria').removeAttribute('data-edit-id');
             }
@@ -314,12 +426,6 @@
 
         // Modal y formulario de producto
         const modalProducto = new bootstrap.Modal(document.getElementById('modalProducto'));
-        document.getElementById('addProductoBtn').addEventListener('click', () => {
-            document.getElementById('formProducto').reset();
-            setProdMsg('', '');
-            cargarCategoriasDropdown();
-            modalProducto.show();
-        });
         function setProdMsg(msg, type) {
             const el = document.getElementById('prodMsg');
             if (!msg) { el.className = 'alert d-none'; el.textContent = ''; return; }
@@ -347,20 +453,69 @@
             const price = parseInt(document.getElementById('prodPrice').value, 10);
             const catId = document.getElementById('prodCat').value;
             const img = document.getElementById('prodImg').value.trim();
+            const editId = document.getElementById('formProducto').getAttribute('data-edit-id');
             try {
-                const res = await fetch(`${API_BASE}/productos`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: nombre, description: desc, brand: brand, basePrice: price, imageUrl: img || null, categoria: { categoriaId: catId } })
-                });
-                if (!res.ok) throw new Error('Error al crear producto');
-                setProdMsg('¡Producto creado exitosamente!', 'success');
+                let res;
+                if (editId) {
+                    // Edición
+                    res = await fetch(`${API_BASE}/productos/${editId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: nombre, description: desc, brand: brand, basePrice: price, imageUrl: img || null, categoria: { categoriaId: catId }, productId: editId })
+                    });
+                } else {
+                    // Creación
+                    res = await fetch(`${API_BASE}/productos`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: nombre, description: desc, brand: brand, basePrice: price, imageUrl: img || null, categoria: { categoriaId: catId } })
+                    });
+                }
+                if (!res.ok) throw new Error(editId ? 'Error al editar producto' : 'Error al crear producto');
                 await cargarTodo();
+                await Swal.fire('¡Éxito!', editId ? 'Producto editado exitosamente.' : 'Producto creado exitosamente.', 'success');
                 setTimeout(() => { modalProducto.hide(); }, 1000);
             } catch (err) {
-                setProdMsg('Error: ' + err.message, 'danger');
+                await Swal.fire('Error', err.message, 'error');
+            } finally {
+                document.getElementById('formProducto').removeAttribute('data-edit-id');
             }
         });
+
+        // Modal y formulario de carga batch
+        const modalBatch = new bootstrap.Modal(document.getElementById('modalBatch'));
+        function setBatchMsg(msg, type) {
+            const el = document.getElementById('batchMsg');
+            if (!msg) { el.className = 'alert d-none'; el.textContent = ''; return; }
+            el.className = 'alert alert-' + type; el.textContent = msg;
+        }
+        document.getElementById('formBatch').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            setBatchMsg('', '');
+            let datos;
+            try {
+                datos = JSON.parse(document.getElementById('batchJson').value);
+                if (!Array.isArray(datos)) throw new Error('El JSON debe ser un array');
+            } catch (err) {
+                await Swal.fire('Error', 'JSON inválido: ' + err.message, 'error');
+                return;
+            }
+            try {
+                const endpoint = `${API_BASE}/productos/batch`;
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+                if (!res.ok) throw new Error('Error al cargar datos batch');
+                await cargarTodo();
+                await Swal.fire('¡Carga batch exitosa!', 'Los productos fueron cargados correctamente.', 'success');
+                setTimeout(() => { modalBatch.hide(); }, 1200);
+            } catch (err) {
+                await Swal.fire('Error', err.message, 'error');
+            }
+        });
+        window.addEventListener('DOMContentLoaded', cargarTodo);
     </script>
 </body>
 </html> 

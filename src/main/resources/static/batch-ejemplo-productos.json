@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Notebook Lenovo ThinkPad",
+    "description": "Notebook profesional con procesador Intel i5 y 8GB RAM.",
+    "brand": "Lenovo",
+    "basePrice": 499990,
+    "imageUrl": "https://media.falabella.com/falabellaCL/129185203_01/w=1500,h=1500,fit=pad",
+    "categoria": { "categoriaId": 435 }
+  },
+  {
+    "name": "Auriculares Bluetooth Sony",
+    "description": "Auriculares inalámbricos con cancelación de ruido.",
+    "brand": "Sony",
+    "basePrice": 89990,
+    "imageUrl": "https://clsonyb2c.vtexassets.com/arquivos/ids/465984-800-800?v=638747999320400000&width=800&height=800&aspect=true",
+    "categoria": { "categoriaId": 435 }
+  },
+  {
+    "name": "Smartphone Galaxy S24",
+    "description": "Teléfono inteligente de última generación con pantalla AMOLED.",
+    "brand": "Samsung",
+    "basePrice": 799990,
+    "imageUrl": "https://www.reuse.cl/cdn/shop/files/smartphone-samsung-s24-5g-128gb-gris-reacondicionado-875044.png?v=1744982540",
+    "categoria": { "categoriaId": 435 }
+  },
+  {
+    "name": "Tablet Apple iPad 10.2",
+    "description": "Tablet con pantalla Retina y chip A13 Bionic.",
+    "brand": "Apple",
+    "basePrice": 349990,
+    "imageUrl": "https://todoclick.cl/6738539-large_default/ipad-wi-fi-cl-256gb-slv-chl.jpg",
+    "categoria": { "categoriaId": 435 }
+  },
+  {
+    "name": "Monitor LG 24'' Full HD",
+    "description": "Monitor LED con resolución Full HD y HDMI.",
+    "brand": "LG",
+    "basePrice": 129990,
+    "imageUrl": "https://s3.amazonaws.com/w3.assets/fotos/27511/1..webp?v=181942171",
+    "categoria": { "categoriaId": 435 }
+  },
+  {
+    "name": "Impresora HP DeskJet 2720",
+    "description": "Impresora multifuncional inalámbrica.",
+    "brand": "HP",
+    "basePrice": 59990,
+    "imageUrl": "https://quecartucho.es/blog/wp-content/uploads/2020/07/Impresora-HP-DeskJet-2720-1024x690.jpg",
+    "categoria": { "categoriaId": 435 }
+  },
+  {
+    "name": "Mouse Logitech M185",
+    "description": "Mouse inalámbrico compacto y ergonómico.",
+    "brand": "Logitech",
+    "basePrice": 9990,
+    "imageUrl": "https://media.falabella.com/falabellaCL/138777154_01/w=1500,h=1500,fit=pad",
+    "categoria": { "categoriaId": 435 }
+  },
+  {
+    "name": "Teclado Microsoft Wired 600",
+    "description": "Teclado con diseño resistente a derrames.",
+    "brand": "Microsoft",
+    "basePrice": 14990,
+    "imageUrl": "https://media.solotodo.com/media/products/756474_picture_1528432988.jpg",
+    "categoria": { "categoriaId": 435 }
+  },
+  {
+    "name": "Disco Duro Externo Seagate 1TB",
+    "description": "Almacenamiento portátil USB 3.0.",
+    "brand": "Seagate",
+    "basePrice": 49990,
+    "imageUrl": "https://www.alcaplus.cl/media/2020/11/seagate-expansion-1tb-stea1000400.png",
+    "categoria": { "categoriaId": 435 }
+  },
+  {
+    "name": "Cámara Web Logitech C920",
+    "description": "Cámara HD para videollamadas y streaming.",
+    "brand": "Logitech",
+    "basePrice": 69990,
+    "imageUrl": "https://dojiw2m9tvv09.cloudfront.net/74837/product/captura-de-pantalla-2022-12-05-a-la-s-22-31-155590.png",
+    "categoria": { "categoriaId": 435 }
+  }
+] 

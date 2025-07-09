@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Deportes",
+    "description": "Artículos y equipamiento deportivo.",
+    "imageUrl": "https://eshopex.cl/wp-content/uploads/2024/12/deportes.jpg"
+  },
+  {
+    "name": "Hogar",
+    "description": "Productos para el hogar y decoración.",
+    "imageUrl": "https://s1.elespanol.com/2021/02/23/imprescindibles/561204746_173721307_1024x576.jpg"
+  },
+  {
+    "name": "Vestuario",
+    "description": "Vestuario y accesorios de moda.",
+    "imageUrl": "https://directivosygerentes.es/wp-content/uploads/2022/10/amazon-firma-alianza-marketplace-moda-segunda-mano-vender-productos-lujo-su-plataforma.jpg"
+  }
+] 
