@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/categorias")
+@RequestMapping("/api/categories")
 @CrossOrigin(origins = "*")
 public class CategoriaController {
     
@@ -47,11 +47,22 @@ public class CategoriaController {
         }
     }
     
-    @PutMapping("/{id}/toggle-active")
-    public ResponseEntity<Categoria> toggleActiveCategoria(@PathVariable Long id) {
+    @PutMapping("/{id}/activate")
+    public ResponseEntity<Categoria> activateCategoria(@PathVariable Long id) {
         return categoriaService.getCategoriaById(id)
                 .map(categoria -> {
-                    categoria.setIsActive(!Boolean.TRUE.equals(categoria.getIsActive()));
+                    categoria.setIsActive(true);
+                    Categoria actualizado = categoriaService.createCategoria(categoria);
+                    return ResponseEntity.ok(actualizado);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @PutMapping("/{id}/deactivate")
+    public ResponseEntity<Categoria> deactivateCategoria(@PathVariable Long id) {
+        return categoriaService.getCategoriaById(id)
+                .map(categoria -> {
+                    categoria.setIsActive(false);
                     Categoria actualizado = categoriaService.createCategoria(categoria);
                     return ResponseEntity.ok(actualizado);
                 })

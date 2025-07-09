@@ -17,7 +17,7 @@ import com.duoc.productos.assembler.ProductoModelAssembler;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/productos")
+@RequestMapping("/api/products")
 @CrossOrigin(origins = "*")
 @Validated
 public class ProductoController {
@@ -126,7 +126,7 @@ public class ProductoController {
         return productoService.searchProductos(query);
     }
     
-    @PutMapping("/{id}/activar")
+    @PutMapping("/{id}/activate")
     public ResponseEntity<Void> activarProducto(@PathVariable Long id) {
         boolean result = productoService.activarProducto(id);
         return result ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
@@ -148,8 +148,8 @@ public class ProductoController {
         return java.util.Collections.singletonMap("exists", exists);
     }
 
-    @PutMapping("/{id}/toggle-active")
-    public ResponseEntity<Producto> toggleActiveProducto(@PathVariable Long id) {
+    @PutMapping("/{id}/deactivate")
+    public ResponseEntity<Producto> desactivarProducto(@PathVariable Long id) {
         return productoService.findById(id)
                 .map(producto -> {
                     producto.setIsActive(!Boolean.TRUE.equals(producto.getIsActive()));

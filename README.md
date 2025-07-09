@@ -78,6 +78,8 @@ Sigue estos pasos para reconstruir y desplegar la aplicación después de realiz
 
 - La aplicación quedará disponible en: [https://productos-459829548521.southamerica-west1.run.app/](https://productos-459829548521.southamerica-west1.run.app/)
 
+- Documentación Swagger UI: [https://productos-459829548521.southamerica-west1.run.app/doc/swagger-ui/index.html](https://productos-459829548521.southamerica-west1.run.app/doc/swagger-ui/index.html)
+
 **Notas:**
 - Asegúrate de tener configurado el proyecto correcto en Google Cloud (`productos-microservicio`).
 - Si es la primera vez, ejecuta `gcloud auth login` y `gcloud auth configure-docker`.

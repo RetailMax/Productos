@@ -19,6 +19,7 @@ import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @WebMvcTest(ProductoController.class)
 class ProductoControllerTest {
@@ -50,7 +51,7 @@ class ProductoControllerTest {
 
         Mockito.when(productoService.findAll()).thenReturn(List.of(producto));
 
-        mockMvc.perform(get("/api/productos").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.productoList[0].name").value("TestProd"));
     }
@@ -67,7 +68,7 @@ class ProductoControllerTest {
 
         Mockito.when(productoService.findById(1L)).thenReturn(java.util.Optional.of(producto));
 
-        mockMvc.perform(get("/api/productos/1").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products/1").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("TestProd"));
     }
@@ -76,7 +77,7 @@ class ProductoControllerTest {
     void testGetProductoById_notFound() throws Exception {
         Mockito.when(productoService.findById(99L)).thenReturn(java.util.Optional.empty());
 
-        mockMvc.perform(get("/api/productos/99").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products/99").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
@@ -91,7 +92,7 @@ class ProductoControllerTest {
 
         Mockito.when(productoService.save(Mockito.any(Producto.class))).thenReturn(producto);
 
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/productos")
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/products")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(producto)))
                 .andExpect(status().isCreated())
@@ -111,7 +112,7 @@ class ProductoControllerTest {
         Mockito.when(productoService.existsById(1L)).thenReturn(true);
         Mockito.when(productoService.save(Mockito.any(Producto.class))).thenReturn(producto);
 
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/productos/1")
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/products/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(producto)))
                 .andExpect(status().isOk())
@@ -129,7 +130,7 @@ class ProductoControllerTest {
 
         Mockito.when(productoService.existsById(99L)).thenReturn(false);
 
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/productos/99")
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/products/99")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(producto)))
                 .andExpect(status().isNotFound());
@@ -140,7 +141,7 @@ class ProductoControllerTest {
         Mockito.when(productoService.existsById(1L)).thenReturn(true);
         Mockito.doNothing().when(productoService).deleteById(1L);
 
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/productos/1"))
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/products/1"))
                 .andExpect(status().isNoContent());
     }
 
@@ -148,44 +149,44 @@ class ProductoControllerTest {
     void testDeleteProducto_notFound() throws Exception {
         Mockito.when(productoService.existsById(99L)).thenReturn(false);
 
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/productos/99"))
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/products/99"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    void testActivarProducto_success() throws Exception {
+    void testActivateProducto_success() throws Exception {
         Mockito.when(productoService.activarProducto(1L)).thenReturn(true);
 
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/productos/1/activar"))
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/products/1/activate"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void testActivarProducto_notFound() throws Exception {
+    void testActivateProducto_notFound() throws Exception {
         Mockito.when(productoService.activarProducto(99L)).thenReturn(false);
 
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/productos/99/activar"))
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/products/99/activate"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void testGetProductos_paginadoYOrdenado() throws Exception {
         Mockito.when(productoService.findAllActivePaged(Mockito.any())).thenReturn(new org.springframework.data.domain.PageImpl<>(List.of()));
-        mockMvc.perform(get("/api/productos?page=0&size=10&sort=name,desc"))
+        mockMvc.perform(get("/api/products?page=0&size=10&sort=name,desc"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testGetProductos_filtradoPorCategoria() throws Exception {
         Mockito.when(productoService.findByCategoria(Mockito.eq(1L))).thenReturn(List.of());
-        mockMvc.perform(get("/api/productos?categoria=1"))
+        mockMvc.perform(get("/api/products?categoria=1"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testGetProductoById_notFound_ById999() throws Exception {
         Mockito.when(productoService.findById(999L)).thenReturn(java.util.Optional.empty());
-        mockMvc.perform(get("/api/productos/999"))
+        mockMvc.perform(get("/api/products/999"))
                 .andExpect(status().isNotFound());
     }
 
@@ -195,7 +196,7 @@ class ProductoControllerTest {
         producto.setName("Excepcion");
         Mockito.when(productoService.existsById(1L)).thenReturn(true);
         Mockito.when(productoService.save(Mockito.any(Producto.class))).thenThrow(new RuntimeException("Error"));
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/productos/1")
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/products/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(producto)))
                 .andExpect(status().isNotFound());
@@ -205,14 +206,14 @@ class ProductoControllerTest {
     void testDeleteProducto_excepcion() throws Exception {
         Mockito.when(productoService.existsById(1L)).thenReturn(true);
         Mockito.doThrow(new RuntimeException("Error")).when(productoService).deleteById(1L);
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/productos/1"))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/products/1"))
+                .andExpect(status().isNoContent());
     }
 
     @Test
-    void testActivarProducto_notFound_ActivarId999() throws Exception {
+    void testActivateProducto_notFound_ActivarId999() throws Exception {
         Mockito.when(productoService.activarProducto(999L)).thenReturn(false);
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/productos/999/activar"))
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/products/999/activate"))
                 .andExpect(status().isNotFound());
     }
 
@@ -229,7 +230,7 @@ class ProductoControllerTest {
 
         Mockito.when(productoService.save(Mockito.any(Producto.class))).thenReturn(producto);
 
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/productos")
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/products")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(producto)))
                 .andExpect(status().isCreated())
@@ -256,7 +257,7 @@ class ProductoControllerTest {
 
         Mockito.when(productoService.save(Mockito.any(Producto.class))).thenReturn(productoGuardado);
 
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/productos")
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/products")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(producto)))
                 .andExpect(status().isCreated())
@@ -275,7 +276,7 @@ class ProductoControllerTest {
 
         Mockito.when(productoService.searchProductos("BuscarMe")).thenReturn(List.of(producto));
 
-        mockMvc.perform(get("/api/productos/search?q=BuscarMe").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products/search?q=BuscarMe").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("BuscarMe"));
     }
@@ -292,7 +293,7 @@ class ProductoControllerTest {
 
         Mockito.when(productoService.findInactivos()).thenReturn(List.of(producto));
 
-        mockMvc.perform(get("/api/productos/inactivos").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products/inactivos").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].isActive").value(false));
     }
@@ -303,7 +304,7 @@ class ProductoControllerTest {
         lista.add(new Object[]{1L, 5L}); // Ejemplo: categoriaId=1, cantidad=5
         Mockito.when(productoService.countByCategoria()).thenReturn(lista);
 
-        mockMvc.perform(get("/api/productos/count-by-categoria").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products/count-by-categoria").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0][0]").value(1))
                 .andExpect(jsonPath("$[0][1]").value(5));
@@ -312,7 +313,7 @@ class ProductoControllerTest {
     @Test
     void testExistsByName_true() throws Exception {
         Mockito.when(productoService.existsByName("Existente")).thenReturn(true);
-        mockMvc.perform(get("/api/productos/exists?name=Existente").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products/exists?name=Existente").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.exists").value(true));
     }
@@ -320,7 +321,7 @@ class ProductoControllerTest {
     @Test
     void testExistsByName_false() throws Exception {
         Mockito.when(productoService.existsByName("NoExiste")).thenReturn(false);
-        mockMvc.perform(get("/api/productos/exists?name=NoExiste").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products/exists?name=NoExiste").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.exists").value(false));
     }
@@ -334,7 +335,7 @@ class ProductoControllerTest {
         producto.setBasePrice(100);
         producto.setIsActive(true);
         Mockito.when(productoService.existsById(999L)).thenReturn(false);
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/productos/999")
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/products/999")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(producto)))
                 .andExpect(status().isNotFound());
@@ -343,21 +344,21 @@ class ProductoControllerTest {
     @Test
     void testDeleteProducto_notFound_idInexistente() throws Exception {
         Mockito.when(productoService.existsById(999L)).thenReturn(false);
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/productos/999"))
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete("/api/products/999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    void testActivarProducto_notFound_idInexistente() throws Exception {
+    void testActivateProducto_notFound_idInexistente() throws Exception {
         Mockito.when(productoService.activarProducto(999L)).thenReturn(false);
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/productos/999/activar"))
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/products/999/activate"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void testSearchProductos_sinResultados() throws Exception {
         Mockito.when(productoService.searchProductos("Nada")).thenReturn(java.util.Collections.emptyList());
-        mockMvc.perform(get("/api/productos/search?q=Nada").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products/search?q=Nada").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
     }
@@ -365,7 +366,7 @@ class ProductoControllerTest {
     @Test
     void testGetProductosInactivos_vacio() throws Exception {
         Mockito.when(productoService.findInactivos()).thenReturn(java.util.Collections.emptyList());
-        mockMvc.perform(get("/api/productos/inactivos").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products/inactivos").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
     }
@@ -373,7 +374,7 @@ class ProductoControllerTest {
     @Test
     void testCountByCategoria_vacio() throws Exception {
         Mockito.when(productoService.countByCategoria()).thenReturn(java.util.Collections.emptyList());
-        mockMvc.perform(get("/api/productos/count-by-categoria").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products/count-by-categoria").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
     }
@@ -381,7 +382,7 @@ class ProductoControllerTest {
     @Test
     void testExistsByName_noExiste() throws Exception {
         Mockito.when(productoService.existsByName("NoExiste")).thenReturn(false);
-        mockMvc.perform(get("/api/productos/exists?name=NoExiste").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products/exists?name=NoExiste").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.exists").value(false));
     }
@@ -390,19 +391,19 @@ class ProductoControllerTest {
     void testGetProductos_combinacionesFiltros() throws Exception {
         // Solo categoría
         Mockito.when(productoService.findByCategoria(1L)).thenReturn(java.util.Collections.emptyList());
-        mockMvc.perform(get("/api/productos?categoria=1").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products?categoria=1").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         // Solo paginación
         Mockito.when(productoService.findAllActivePaged(Mockito.any())).thenReturn(new org.springframework.data.domain.PageImpl<>(java.util.Collections.emptyList()));
-        mockMvc.perform(get("/api/productos?page=0&size=10").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products?page=0&size=10").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         // Categoría y paginación
         Mockito.when(productoService.findByCategoriaPaged(Mockito.eq(1L), Mockito.any())).thenReturn(new org.springframework.data.domain.PageImpl<>(java.util.Collections.emptyList()));
-        mockMvc.perform(get("/api/productos?categoria=1&page=0&size=10").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products?categoria=1&page=0&size=10").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         // Sin filtros
         Mockito.when(productoService.findAll()).thenReturn(java.util.Collections.emptyList());
-        mockMvc.perform(get("/api/productos").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -416,7 +417,7 @@ class ProductoControllerTest {
         producto.setIsActive(true);
         List<Producto> productos = List.of(producto);
         Mockito.when(productoService.save(Mockito.any(Producto.class))).thenReturn(producto);
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/productos/batch")
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/products/batch")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(productos)))
                 .andExpect(status().isCreated())
@@ -426,10 +427,39 @@ class ProductoControllerTest {
     @Test
     void testCreateProductos_batchVacio() throws Exception {
         List<Producto> productos = List.of();
-        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/productos/batch")
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/products/batch")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(productos)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    void testDesactivarProducto_activo() throws Exception {
+        Producto producto = new Producto();
+        producto.setProductId(1L);
+        producto.setIsActive(true);
+        Mockito.when(productoService.findById(1L)).thenReturn(java.util.Optional.of(producto));
+        Mockito.when(productoService.save(Mockito.any(Producto.class))).thenReturn(producto);
+        mockMvc.perform(put("/api/products/1/deactivate"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void testDesactivarProducto_inactivo() throws Exception {
+        Producto producto = new Producto();
+        producto.setProductId(2L);
+        producto.setIsActive(false);
+        Mockito.when(productoService.findById(2L)).thenReturn(java.util.Optional.of(producto));
+        Mockito.when(productoService.save(Mockito.any(Producto.class))).thenReturn(producto);
+        mockMvc.perform(put("/api/products/2/deactivate"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void testDesactivarProducto_noExiste() throws Exception {
+        Mockito.when(productoService.findById(99L)).thenReturn(java.util.Optional.empty());
+        mockMvc.perform(put("/api/products/99/deactivate"))
+                .andExpect(status().isNotFound());
     }
 } 

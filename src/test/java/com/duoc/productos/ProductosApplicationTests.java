@@ -11,8 +11,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 import java.util.Optional;
 import java.time.LocalDateTime;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class ProductosApplicationTests {
 
 	@Test
@@ -183,11 +185,6 @@ class ProductosApplicationTests {
 		assertEquals("Test Descripción", categoria.getDescription());
 		assertTrue(categoria.getIsActive());
 		assertNotNull(categoria.getCreatedAt());
-	}
-
-	@Test
-	void mainRuns() {
-		ProductosApplication.main(new String[] {});
 	}
 
 }

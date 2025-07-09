@@ -56,21 +56,21 @@ class ProductoControllerIT {
 
     @Test
     void testGetProductos() throws Exception {
-        mockMvc.perform(get("/api/productos"))
+        mockMvc.perform(get("/api/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.productoList[0].name").exists());
     }
 
     @Test
     void testGetProductoById() throws Exception {
-        mockMvc.perform(get("/api/productos/" + producto.getProductId()))
+        mockMvc.perform(get("/api/products/" + producto.getProductId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("ProdIT"));
     }
 
     @Test
     void testGetProductoByIdNotFound() throws Exception {
-        mockMvc.perform(get("/api/productos/999999"))
+        mockMvc.perform(get("/api/products/999999"))
                 .andExpect(status().isNotFound());
     }
 
@@ -83,7 +83,7 @@ class ProductoControllerIT {
         nuevo.setBasePrice(200);
         nuevo.setIsActive(true);
         nuevo.setCategoria(categoria);
-        mockMvc.perform(post("/api/productos")
+        mockMvc.perform(post("/api/products")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nuevo)))
                 .andExpect(status().isCreated())
@@ -99,7 +99,7 @@ class ProductoControllerIT {
         nuevo.setBasePrice(300);
         nuevo.setIsActive(true);
         nuevo.setCategoria(categoria);
-        mockMvc.perform(post("/api/productos/batch")
+        mockMvc.perform(post("/api/products/batch")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(java.util.List.of(nuevo))))
                 .andExpect(status().isCreated())
@@ -109,7 +109,7 @@ class ProductoControllerIT {
     @Test
     void testUpdateProducto() throws Exception {
         producto.setDescription("Actualizado");
-        mockMvc.perform(put("/api/productos/" + producto.getProductId())
+        mockMvc.perform(put("/api/products/" + producto.getProductId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(producto)))
                 .andExpect(status().isOk())
@@ -118,15 +118,15 @@ class ProductoControllerIT {
 
     @Test
     void testDeleteProducto() throws Exception {
-        mockMvc.perform(delete("/api/productos/" + producto.getProductId()))
+        mockMvc.perform(delete("/api/products/" + producto.getProductId()))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    void testActivarProducto() throws Exception {
+    void testActivateProducto() throws Exception {
         producto.setIsActive(false);
         productoRepository.save(producto);
-        mockMvc.perform(put("/api/productos/" + producto.getProductId() + "/activar"))
+        mockMvc.perform(put("/api/products/" + producto.getProductId() + "/activate"))
                 .andExpect(status().isOk());
         Producto actualizado = productoRepository.findById(producto.getProductId()).get();
         assertTrue(actualizado.getIsActive());
@@ -134,17 +134,17 @@ class ProductoControllerIT {
 
     @Test
     void testSearchProductos() throws Exception {
-        mockMvc.perform(get("/api/productos/search").param("q", "ProdIT"))
+        mockMvc.perform(get("/api/products/search").param("q", "ProdIT"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("ProdIT"));
     }
 
     @Test
     void testExistsByName() throws Exception {
-        mockMvc.perform(get("/api/productos/exists").param("name", "ProdIT"))
+        mockMvc.perform(get("/api/products/exists").param("name", "ProdIT"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.exists").value(true));
-        mockMvc.perform(get("/api/productos/exists").param("name", "NoExiste"))
+        mockMvc.perform(get("/api/products/exists").param("name", "NoExiste"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.exists").value(false));
     }
@@ -153,21 +153,21 @@ class ProductoControllerIT {
     void testGetProductosInactivos() throws Exception {
         producto.setIsActive(false);
         productoRepository.save(producto);
-        mockMvc.perform(get("/api/productos/inactivos"))
+        mockMvc.perform(get("/api/products/inactivos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].isActive").value(false));
     }
 
     @Test
     void testCountByCategoria() throws Exception {
-        mockMvc.perform(get("/api/productos/count-by-categoria"))
+        mockMvc.perform(get("/api/products/count-by-categoria"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[*][0]").value(org.hamcrest.Matchers.hasItem(categoria.getCategoriaId().intValue())));
     }
 
     @Test
     void testGetProductosWithPagination() throws Exception {
-        mockMvc.perform(get("/api/productos")
+        mockMvc.perform(get("/api/products")
                 .param("page", "0")
                 .param("size", "10"))
                 .andExpect(status().isOk());
@@ -175,7 +175,7 @@ class ProductoControllerIT {
 
     @Test
     void testGetProductosWithCategoriaFilter() throws Exception {
-        mockMvc.perform(get("/api/productos")
+        mockMvc.perform(get("/api/products")
                 .param("categoria", categoria.getCategoriaId().toString()))
                 .andExpect(status().isOk());
     }
@@ -189,7 +189,7 @@ class ProductoControllerIT {
         nuevo.setBasePrice(100);
         nuevo.setIsActive(true);
         nuevo.setCategoria(categoria);
-        mockMvc.perform(put("/api/productos/999999")
+        mockMvc.perform(put("/api/products/999999")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nuevo)))
                 .andExpect(status().isNotFound());
@@ -197,7 +197,7 @@ class ProductoControllerIT {
 
     @Test
     void testDeleteProductoNotFound() throws Exception {
-        mockMvc.perform(delete("/api/productos/999999"))
+        mockMvc.perform(delete("/api/products/999999"))
                 .andExpect(status().isNotFound());
     }
 
@@ -205,7 +205,7 @@ class ProductoControllerIT {
     void testCreateProductoInvalid() throws Exception {
         Producto invalido = new Producto();
         // Falta nombre, descripción, etc.
-        mockMvc.perform(post("/api/productos")
+        mockMvc.perform(post("/api/products")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalido)))
                 .andExpect(status().isBadRequest());
@@ -213,7 +213,7 @@ class ProductoControllerIT {
 
     @Test
     void testSearchProductosNoResults() throws Exception {
-        mockMvc.perform(get("/api/productos/search").param("q", "NoExiste"))
+        mockMvc.perform(get("/api/products/search").param("q", "NoExiste"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(0));
@@ -221,7 +221,7 @@ class ProductoControllerIT {
 
     @Test
     void testGetProductosPaginationAndSort() throws Exception {
-        mockMvc.perform(get("/api/productos")
+        mockMvc.perform(get("/api/products")
                 .param("page", "0")
                 .param("size", "5")
                 .param("sort", "name,desc"))
@@ -230,7 +230,7 @@ class ProductoControllerIT {
 
     @Test
     void testGetProductosCategoriaAndPagination() throws Exception {
-        mockMvc.perform(get("/api/productos")
+        mockMvc.perform(get("/api/products")
                 .param("categoria", categoria.getCategoriaId().toString())
                 .param("page", "0")
                 .param("size", "5"))
@@ -239,14 +239,14 @@ class ProductoControllerIT {
 
     @Test
     void testGetProductosOnlyCategoria() throws Exception {
-        mockMvc.perform(get("/api/productos")
+        mockMvc.perform(get("/api/products")
                 .param("categoria", categoria.getCategoriaId().toString()))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testCreateProductosEmptyList() throws Exception {
-        mockMvc.perform(post("/api/productos/batch")
+        mockMvc.perform(post("/api/products/batch")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(java.util.List.of())))
                 .andExpect(status().isCreated())
@@ -257,7 +257,7 @@ class ProductoControllerIT {
     @Test
     void testCreateProductosInvalid() throws Exception {
         Producto invalido = new Producto();
-        mockMvc.perform(post("/api/productos/batch")
+        mockMvc.perform(post("/api/products/batch")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(java.util.List.of(invalido))))
                 .andExpect(status().isBadRequest());
@@ -279,7 +279,7 @@ class ProductoControllerIT {
         p2.setBasePrice(20);
         p2.setIsActive(true);
         p2.setCategoria(categoria);
-        mockMvc.perform(post("/api/productos/batch")
+        mockMvc.perform(post("/api/products/batch")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(java.util.List.of(p1, p2))))
                 .andExpect(status().isCreated())
@@ -287,8 +287,8 @@ class ProductoControllerIT {
     }
 
     @Test
-    void testActivarProductoNotFound() throws Exception {
-        mockMvc.perform(put("/api/productos/999999/activar"))
+    void testActivateProductoNotFound() throws Exception {
+        mockMvc.perform(put("/api/products/999999/activate"))
                 .andExpect(status().isNotFound());
     }
 
@@ -302,7 +302,7 @@ class ProductoControllerIT {
         valido.setIsActive(true);
         valido.setCategoria(categoria);
         Producto invalido = new Producto(); // Sin nombre ni descripción
-        mockMvc.perform(post("/api/productos/batch")
+        mockMvc.perform(post("/api/products/batch")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(java.util.List.of(valido, invalido))))
                 .andExpect(status().isBadRequest());

@@ -60,21 +60,21 @@ class CategoriaControllerIT {
 
     @Test
     void testGetAllCategorias() throws Exception {
-        mockMvc.perform(get("/api/categorias"))
+        mockMvc.perform(get("/api/categories"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").exists());
     }
 
     @Test
     void testGetCategoriaById() throws Exception {
-        mockMvc.perform(get("/api/categorias/" + categoria.getCategoriaId()))
+        mockMvc.perform(get("/api/categories/" + categoria.getCategoriaId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("CatIT"));
     }
 
     @Test
     void testGetCategoriaByIdNotFound() throws Exception {
-        mockMvc.perform(get("/api/categorias/999999"))
+        mockMvc.perform(get("/api/categories/999999"))
                 .andExpect(status().isNotFound());
     }
 
@@ -84,7 +84,7 @@ class CategoriaControllerIT {
         nueva.setName("Nueva");
         nueva.setDescription("DescNueva");
         nueva.setIsActive(true);
-        mockMvc.perform(post("/api/categorias")
+        mockMvc.perform(post("/api/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nueva)))
                 .andExpect(status().isCreated())
@@ -94,7 +94,7 @@ class CategoriaControllerIT {
     @Test
     void testUpdateCategoria() throws Exception {
         categoria.setDescription("Actualizada");
-        mockMvc.perform(put("/api/categorias/" + categoria.getCategoriaId())
+        mockMvc.perform(put("/api/categories/" + categoria.getCategoriaId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(categoria)))
                 .andExpect(status().isOk())
@@ -107,7 +107,7 @@ class CategoriaControllerIT {
         nueva.setName("NoExiste");
         nueva.setDescription("Desc");
         nueva.setIsActive(true);
-        mockMvc.perform(put("/api/categorias/999999")
+        mockMvc.perform(put("/api/categories/999999")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nueva)))
                 .andExpect(status().isNotFound());
@@ -115,26 +115,26 @@ class CategoriaControllerIT {
 
     @Test
     void testDeleteCategoria() throws Exception {
-        mockMvc.perform(delete("/api/categorias/" + categoria.getCategoriaId()))
+        mockMvc.perform(delete("/api/categories/" + categoria.getCategoriaId()))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void testDeleteCategoriaNotFound() throws Exception {
-        mockMvc.perform(delete("/api/categorias/999999"))
+        mockMvc.perform(delete("/api/categories/999999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void testSearchCategorias() throws Exception {
-        mockMvc.perform(get("/api/categorias/search").param("q", "CatIT"))
+        mockMvc.perform(get("/api/categories/search").param("q", "CatIT"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("CatIT"));
     }
 
     @Test
     void testSearchCategoriasNoResults() throws Exception {
-        mockMvc.perform(get("/api/categorias/search").param("q", "NoExiste"))
+        mockMvc.perform(get("/api/categories/search").param("q", "NoExiste"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(0));
@@ -142,10 +142,10 @@ class CategoriaControllerIT {
 
     @Test
     void testExistsByName() throws Exception {
-        mockMvc.perform(get("/api/categorias/exists").param("name", "CatIT"))
+        mockMvc.perform(get("/api/categories/exists").param("name", "CatIT"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.exists").value(true));
-        mockMvc.perform(get("/api/categorias/exists").param("name", "NoExiste"))
+        mockMvc.perform(get("/api/categories/exists").param("name", "NoExiste"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.exists").value(false));
     }
