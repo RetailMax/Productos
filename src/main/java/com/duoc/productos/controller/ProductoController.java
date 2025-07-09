@@ -58,7 +58,7 @@ public class ProductoController {
         } else if (categoriaId != null) {
             productos = productoService.findByCategoria(categoriaId);
         } else {
-            productos = productoService.findAll().stream().filter(Producto::getIsActive).toList();
+            productos = productoService.findAll();
         }
         List<EntityModel<Producto>> productosModel = productos.stream()
             .map(productoModelAssembler::toModel)
@@ -114,15 +114,11 @@ public class ProductoController {
     
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProducto(@PathVariable Long id) {
-        try {
-            if (!productoService.existsById(id)) {
-                return ResponseEntity.notFound().build();
-            }
-            productoService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
+        if (!productoService.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
+        productoService.deleteProductoReal(id);
+        return ResponseEntity.noContent().build();
     }
     
     @GetMapping("/search")
@@ -150,5 +146,16 @@ public class ProductoController {
     public java.util.Map<String, Boolean> existsByName(@RequestParam("name") String name) {
         boolean exists = productoService.existsByName(name);
         return java.util.Collections.singletonMap("exists", exists);
+    }
+
+    @PutMapping("/{id}/toggle-active")
+    public ResponseEntity<Producto> toggleActiveProducto(@PathVariable Long id) {
+        return productoService.findById(id)
+                .map(producto -> {
+                    producto.setIsActive(!Boolean.TRUE.equals(producto.getIsActive()));
+                    Producto actualizado = productoService.save(producto);
+                    return ResponseEntity.ok(actualizado);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 } 

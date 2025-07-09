@@ -44,3 +44,41 @@ Puedes usar el archivo de ejemplo `src/main/resources/static/batch-ejemplo-produ
 ---
 
 Para más detalles, revisa la documentación en la interfaz (Swagger UI) o consulta los archivos de ejemplo incluidos en el proyecto.
+
+Ruta de Jacoco (Local):
+E:\CODE\LEARNING\DUOC - ANALISTA PROGRAMADOR\FULL STACK\Fullstack - Productos\Productos\target\site\jacoco\index.html
+
+## Despliegue en Google Cloud Run
+
+Sigue estos pasos para reconstruir y desplegar la aplicación después de realizar cambios:
+
+1. **Construir el JAR:**
+
+   ```sh
+   ./mvnw clean package -DskipTests
+   ```
+
+2. **Construir la imagen Docker:**
+
+   ```sh
+   docker build -t gcr.io/productos-microservicio/productos:latest .
+   ```
+
+3. **Subir la imagen a Google Container Registry:**
+
+   ```sh
+   docker push gcr.io/productos-microservicio/productos:latest
+   ```
+
+4. **Desplegar en Cloud Run:**
+
+   ```sh
+   gcloud run deploy productos --image gcr.io/productos-microservicio/productos:latest --platform managed --region southamerica-west1 --allow-unauthenticated
+   ```
+
+- La aplicación quedará disponible en: [https://productos-459829548521.southamerica-west1.run.app/](https://productos-459829548521.southamerica-west1.run.app/)
+
+**Notas:**
+- Asegúrate de tener configurado el proyecto correcto en Google Cloud (`productos-microservicio`).
+- Si es la primera vez, ejecuta `gcloud auth login` y `gcloud auth configure-docker`.
+- Puedes modificar el nombre del servicio (`productos`) o la región si lo necesitas.

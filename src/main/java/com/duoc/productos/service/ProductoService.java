@@ -95,4 +95,9 @@ public class ProductoService {
     public boolean existsByName(String name) {
         return productoRepository.existsByNameIgnoreCase(name);
     }
+
+    // Borrado real de producto
+    public void deleteProductoReal(Long id) {
+        productoRepository.deleteById(id);
+    }
 }

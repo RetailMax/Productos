@@ -2,6 +2,7 @@ package com.duoc.productos.controller;
 
 import com.duoc.productos.model.Categoria;
 import com.duoc.productos.service.CategoriaService;
+import com.duoc.productos.assembler.CategoriaModelAssembler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,9 @@ class CategoriaControllerTest {
 
     @MockBean
     private CategoriaService categoriaService;
+
+    @MockBean
+    private CategoriaModelAssembler categoriaModelAssembler;
 
     @Autowired
     private ObjectMapper objectMapper;

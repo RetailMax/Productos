@@ -2,12 +2,15 @@ package com.duoc.productos.controller;
 
 import com.duoc.productos.model.Producto;
 import com.duoc.productos.service.ProductoService;
+import com.duoc.productos.assembler.ProductoModelAssembler;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -15,6 +18,7 @@ import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 
 @WebMvcTest(ProductoController.class)
 class ProductoControllerTest {
@@ -24,6 +28,15 @@ class ProductoControllerTest {
 
     @MockBean
     private ProductoService productoService;
+
+    @MockBean
+    private ProductoModelAssembler productoModelAssembler;
+
+    @BeforeEach
+    void setUpAssemblerMock() {
+        org.mockito.Mockito.when(productoModelAssembler.toModel(any(Producto.class)))
+            .thenAnswer(invocation -> EntityModel.of(invocation.getArgument(0)));
+    }
 
     @Test
     void testGetProductos() throws Exception {

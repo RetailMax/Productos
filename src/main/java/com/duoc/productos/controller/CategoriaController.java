@@ -47,6 +47,17 @@ public class CategoriaController {
         }
     }
     
+    @PutMapping("/{id}/toggle-active")
+    public ResponseEntity<Categoria> toggleActiveCategoria(@PathVariable Long id) {
+        return categoriaService.getCategoriaById(id)
+                .map(categoria -> {
+                    categoria.setIsActive(!Boolean.TRUE.equals(categoria.getIsActive()));
+                    Categoria actualizado = categoriaService.createCategoria(categoria);
+                    return ResponseEntity.ok(actualizado);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategoria(@PathVariable Long id) {
         try {
