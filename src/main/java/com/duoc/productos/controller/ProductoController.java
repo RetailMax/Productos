@@ -53,7 +53,7 @@ public class ProductoController {
             if (categoriaId != null) {
                 productos = productoService.findByCategoriaPaged(categoriaId, pageable).getContent();
             } else {
-                productos = productoService.findAllActivePaged(pageable).getContent();
+                productos = productoService.findAllPaged(pageable).getContent();
             }
         } else if (categoriaId != null) {
             productos = productoService.findByCategoria(categoriaId);
@@ -83,6 +83,9 @@ public class ProductoController {
     
     @PostMapping(value = "/batch", consumes = "application/json")
     public ResponseEntity<List<Producto>> createProductos(@RequestBody List<@Valid Producto> productos) {
+        if (productos.size() > 100) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "No se pueden agregar más de 100 productos por batch.");
+        }
         if (validator != null) {
             for (Producto p : productos) {
                 var errors = new org.springframework.validation.BeanPropertyBindingResult(p, "producto");

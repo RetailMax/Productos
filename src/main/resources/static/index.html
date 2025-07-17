@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
+        :root {
+            --navbar-height: 128px;
+            --verde-retailmax: #22c55e;
+            --rojo-inactivo: #ef4444;
+        }
         .product-card img {
             object-fit: cover;
             height: 200px;
@@ -18,172 +23,264 @@
             font-size: 0.9em;
             margin-bottom: 0.5em;
         }
+        /* Sticky aside compensando navbar */
+        .filtros-sticky {
+            position: sticky;
+            top: var(--navbar-height);
+        }
+        /* Colores verdes personalizados */
+        .bg-verde-retailmax {
+            background-color: var(--verde-retailmax) !important;
+            color: #fff !important;
+        }
+        .btn-verde-retailmax {
+            background-color: var(--verde-retailmax) !important;
+            border-color: var(--verde-retailmax) !important;
+            color: #fff !important;
+        }
+        .btn-verde-retailmax:hover, .btn-verde-retailmax:focus {
+            background-color: #16a34a !important;
+            border-color: #16a34a !important;
+            color: #fff !important;
+        }
+        .badge-verde-retailmax {
+            background-color: var(--verde-retailmax) !important;
+            color: #fff !important;
+        }
+        .badge-inactivo {
+            background-color: var(--rojo-inactivo) !important;
+            color: #fff !important;
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 shadow-sm">
-      <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 shadow-sm sticky-top" style="z-index: 1030;">
+      <div class="container-fluid ps-md-4 ps-3">
         <a class="navbar-brand d-flex align-items-center" href="#">
           <img src="retailmax.png" alt="RetailMax" width="80" height="80" class="me-2" style="object-fit:contain;">
           <span class="fw-bold">RetailMax</span>
         </a>
       </div>
     </nav>
-    <div class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3">Catálogo de Productos</h1>
-            <div>
-                <button id="addCategoriaBtn" class="btn btn-success me-2">
-                    <i class="bi bi-tags-fill me-1"></i>Agregar categoría
-                </button>
-                <button id="addProductoBtn" class="btn btn-warning me-2">
-                    <i class="bi bi-box-seam me-1"></i>Agregar producto
-                </button>
-                <button id="batchBtn" class="btn btn-info">
-                    <i class="bi bi-upload me-1"></i>Carga batch
-                </button>
-            </div>
-        </div>
-        <!-- Sección de categorías -->
-        <h2 class="h5 mb-3">Categorías</h2>
-        <div id="categoriasRow" class="row g-3 mb-4">
-            <!-- Aquí se insertarán las cards de categorías -->
-        </div>
-        <!-- Modal Agregar Categoría -->
-        <div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalCategoriaLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="modalCategoriaLabel">Agregar nueva categoría</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-              </div>
-              <form id="formCategoria">
-                <div class="modal-body">
-                  <div class="mb-3">
-                    <label for="catName" class="form-label">Nombre</label>
-                    <input type="text" class="form-control" id="catName" required maxlength="100">
-                  </div>
-                  <div class="mb-3">
-                    <label for="catDesc" class="form-label">Descripción</label>
-                    <input type="text" class="form-control" id="catDesc" required maxlength="500">
-                  </div>
-                  <div class="mb-3">
-                    <label for="catImg" class="form-label">URL de imagen (opcional)</label>
-                    <input type="url" class="form-control" id="catImg" maxlength="500">
-                  </div>
-                  <div id="catMsg" class="alert d-none" role="alert"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- ASIDE FILTROS -->
+            <aside class="col-md-3 col-lg-2 mb-4">
+                <div class="filtros-sticky">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-verde-retailmax">
+                            <i class="bi bi-funnel"></i> Filtros
+                        </div>
+                        <div class="card-body">
+                            <form id="filtrosForm" class="row g-3 align-items-end">
+                                <div class="col-12">
+                                    <label for="filtroCategoria" class="form-label mb-0">Categoría</label>
+                                    <select id="filtroCategoria" class="form-select">
+                                        <option value="">Todas</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label for="filtroBusqueda" class="form-label mb-0">Buscar</label>
+                                    <input type="search" id="filtroBusqueda" class="form-control" placeholder="Nombre o descripción">
+                                </div>
+                                <div class="col-12">
+                                    <label for="filtroOrden" class="form-label mb-0">Ordenar por</label>
+                                    <select id="filtroOrden" class="form-select">
+                                        <option value="">Por defecto</option>
+                                        <option value="name,asc">Nombre (A-Z)</option>
+                                        <option value="name,desc">Nombre (Z-A)</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label mb-0">Estado</label>
+                                    <select id="filtroEstado" class="form-select">
+                                        <option value="todos" selected>Todos</option>
+                                        <option value="activos">Activos</option>
+                                        <option value="inactivos">Inactivos</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 d-flex gap-2">
+                                    <button type="submit" class="btn btn-verde-retailmax flex-fill"><i class="bi bi-funnel"></i> Aplicar</button>
+                                    <button type="button" id="btnResetFiltros" class="btn btn-outline-secondary flex-fill"><i class="bi bi-arrow-counterclockwise"></i> Restablecer</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                  <button type="submit" class="btn btn-success">Agregar</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        <!-- Modal Agregar Producto -->
-        <div class="modal fade" id="modalProducto" tabindex="-1" aria-labelledby="modalProductoLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="modalProductoLabel">Agregar nuevo producto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-              </div>
-              <form id="formProducto">
-                <div class="modal-body">
-                  <div class="mb-3">
-                    <label for="prodName" class="form-label">Nombre</label>
-                    <input type="text" class="form-control" id="prodName" required maxlength="100">
-                  </div>
-                  <div class="mb-3">
-                    <label for="prodDesc" class="form-label">Descripción</label>
-                    <input type="text" class="form-control" id="prodDesc" required maxlength="500">
-                  </div>
-                  <div class="mb-3">
-                    <label for="prodBrand" class="form-label">Marca</label>
-                    <input type="text" class="form-control" id="prodBrand" required maxlength="50">
-                  </div>
-                  <div class="mb-3">
-                    <label for="prodPrice" class="form-label">Precio</label>
-                    <input type="number" class="form-control" id="prodPrice" required min="0">
-                  </div>
-                  <div class="mb-3">
-                    <label for="prodCat" class="form-label">Categoría</label>
-                    <select class="form-select" id="prodCat" required></select>
-                  </div>
-                  <div class="mb-3">
-                    <label for="prodImg" class="form-label">URL de imagen (opcional)</label>
-                    <input type="url" class="form-control" id="prodImg" maxlength="500">
-                  </div>
-                  <div id="prodMsg" class="alert d-none" role="alert"></div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                  <button type="submit" class="btn btn-warning">Agregar</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        <!-- Modal Carga Batch -->
-        <div class="modal fade" id="modalBatch" tabindex="-1" aria-labelledby="modalBatchLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="modalBatchLabel">Carga batch de productos</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-              </div>
-              <form id="formBatch">
-                <div class="modal-body">
-                  <div class="mb-3">
-                    <label for="batchJson" class="form-label">Pega aquí el JSON (array de productos)</label>
-                    <textarea class="form-control" id="batchJson" rows="8" required placeholder='[
+            </aside>
+            <!-- CONTENIDO PRINCIPAL -->
+            <main class="col-md-9 col-lg-10">
+                <div class="py-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1 class="h3">Catálogo de Productos</h1>
+                        <div>
+                            <button id="addCategoriaBtn" class="btn btn-verde-retailmax me-2">
+                                <i class="bi bi-tags-fill me-1"></i>Agregar categoría
+                            </button>
+                            <button id="addProductoBtn" class="btn btn-warning me-2">
+                                <i class="bi bi-box-seam me-1"></i>Agregar producto
+                            </button>
+                            <button id="batchBtn" class="btn btn-info">
+                                <i class="bi bi-upload me-1"></i>Carga batch
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Sección de categorías -->
+                    <h2 class="h5 mb-3">Categorías</h2>
+                    <div id="categoriasRow" class="row g-3 mb-4">
+                        <!-- Aquí se insertarán las cards de categorías -->
+                    </div>
+                    <!-- Modal Agregar Categoría -->
+                    <div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalCategoriaLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="modalCategoriaLabel">Agregar nueva categoría</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                          </div>
+                          <form id="formCategoria">
+                            <div class="modal-body">
+                              <div class="mb-3">
+                                <label for="catName" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="catName" required maxlength="100">
+                              </div>
+                              <div class="mb-3">
+                                <label for="catDesc" class="form-label">Descripción</label>
+                                <input type="text" class="form-control" id="catDesc" required maxlength="500">
+                              </div>
+                              <div class="mb-3">
+                                <label for="catImg" class="form-label">URL de imagen (opcional)</label>
+                                <input type="url" class="form-control" id="catImg" maxlength="500">
+                              </div>
+                              <div id="catMsg" class="alert d-none" role="alert"></div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                              <button type="submit" class="btn btn-success">Agregar</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Modal Agregar Producto -->
+                    <div class="modal fade" id="modalProducto" tabindex="-1" aria-labelledby="modalProductoLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="modalProductoLabel">Agregar nuevo producto</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                          </div>
+                          <form id="formProducto">
+                            <div class="modal-body">
+                              <div class="mb-3">
+                                <label for="prodName" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="prodName" required maxlength="100">
+                              </div>
+                              <div class="mb-3">
+                                <label for="prodDesc" class="form-label">Descripción</label>
+                                <input type="text" class="form-control" id="prodDesc" required maxlength="500">
+                              </div>
+                              <div class="mb-3">
+                                <label for="prodBrand" class="form-label">Marca</label>
+                                <input type="text" class="form-control" id="prodBrand" required maxlength="50">
+                              </div>
+                              <div class="mb-3">
+                                <label for="prodPrice" class="form-label">Precio</label>
+                                <input type="number" class="form-control" id="prodPrice" required min="0">
+                              </div>
+                              <div class="mb-3">
+                                <label for="prodCat" class="form-label">Categoría</label>
+                                <select class="form-select" id="prodCat" required></select>
+                              </div>
+                              <div class="mb-3">
+                                <label for="prodImg" class="form-label">URL de imagen (opcional)</label>
+                                <input type="url" class="form-control" id="prodImg" maxlength="500">
+                              </div>
+                              <div id="prodMsg" class="alert d-none" role="alert"></div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                              <button type="submit" class="btn btn-warning">Agregar</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Modal Carga Batch -->
+                    <div class="modal fade" id="modalBatch" tabindex="-1" aria-labelledby="modalBatchLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="modalBatchLabel">Carga batch de productos</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                          </div>
+                          <form id="formBatch">
+                            <div class="modal-body">
+                              <div class="mb-3">
+                                <label for="batchJson" class="form-label">Pega aquí el JSON (array de productos)</label>
+                                <textarea class="form-control" id="batchJson" rows="8" required placeholder='[
   { "name": "...", ... },
   ...
 ]'></textarea>
-                  </div>
-                  <div id="batchMsg" class="alert d-none" role="alert"></div>
+                              </div>
+                              <div id="batchMsg" class="alert d-none" role="alert"></div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                              <button type="submit" class="btn btn-info">Cargar</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    <h2 class="h5 mb-3">Productos</h2>
+                    <div id="productsRow" class="row g-4">
+                        <!-- Aquí se insertarán las cards de productos -->
+                    </div>
+                    <div id="noProductsMsg" class="alert alert-info mt-4 d-none">No hay productos para mostrar.</div>
+                    <div id="paginacionProductos" class="mt-3"></div>
                 </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                  <button type="submit" class="btn btn-info">Cargar</button>
-                </div>
-              </form>
-            </div>
-          </div>
+            </main>
         </div>
-        <h2 class="h5 mb-3">Productos</h2>
-        <div id="productsRow" class="row g-4">
-            <!-- Aquí se insertarán las cards de productos -->
-        </div>
-        <div id="noProductsMsg" class="alert alert-info mt-4 d-none">No hay productos para mostrar.</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const API_BASE = '/api';
-        const DEFAULT_IMAGE = 'https://via.placeholder.com/300x200?text=Sin+Imagen';
+        const DEFAULT_IMAGE = 'https://static.vecteezy.com/system/resources/previews/005/377/442/non_2x/404-error-page-icon-page-not-found-line-icon-laptop-with-warning-sign-and-error-404-trouble-internet-connection-concept-file-not-found-and-broken-page-icon-illustration-vector.jpg';
         let categorias = {};
 
-        // Cargar categorías para mapear nombre e imagen
-        async function fetchCategorias() {
-            const res = await fetch(`${API_BASE}/categorias`);
-            const data = await res.json();
+        // Refresco global de productos y categorías
+        async function refrescarTodo() {
+            await cargarCategoriasYRenderizar();
+            await aplicarFiltros();
+        }
+
+        // Cargar y renderizar categorías SIEMPRE
+        async function cargarCategoriasYRenderizar() {
+            const res = await fetch(`${API_BASE}/categories`);
+            let data = await res.json();
+            // Si la respuesta es HATEOAS, extrae la lista
+            if (data._embedded && data._embedded.categoriaList) {
+                data = data._embedded.categoriaList;
+            }
             categorias = {};
             data.forEach(cat => {
                 categorias[cat.categoriaId] = cat;
             });
+            renderCategorias(data);
+            // También llenar el filtro de categorías
+            const filtroCategoria = document.getElementById('filtroCategoria');
+            if (filtroCategoria) {
+                filtroCategoria.innerHTML = '<option value="">Todas</option>';
+                data.forEach(cat => {
+                    filtroCategoria.innerHTML += `<option value="${cat.categoriaId}">${cat.name}</option>`;
+                });
+            }
         }
 
-        // Cargar productos y renderizar cards
-        async function fetchProductos() {
-            const res = await fetch(`${API_BASE}/productos`);
-            const data = await res.json();
-            renderProductos(data._embedded ? data._embedded.productoList : data);
-        }
-
+        // Renderizar productos (requiere que categorias ya esté cargado)
         function renderProductos(productos) {
-            // Asegura que productos sea siempre un array
             if (!Array.isArray(productos)) {
                 if (productos && productos._embedded && Array.isArray(productos._embedded.productoList)) {
                     productos = productos._embedded.productoList;
@@ -200,11 +297,9 @@
             }
             noMsg.classList.add('d-none');
             productos.forEach(prod => {
-                // Corregir obtención de categoría
                 const cat = prod.categoria ? categorias[prod.categoria.categoriaId] : {};
                 const card = document.createElement('div');
                 card.className = 'col-12 col-sm-6 col-md-4 col-lg-3';
-                // Formatear precio con separador de miles (punto)
                 const precioFormateado = prod.basePrice != null ? prod.basePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : '0';
                 card.innerHTML = `
                     <div class="card product-card h-100 shadow-sm">
@@ -219,11 +314,11 @@
                             <div class="mt-auto">
                                 <div class="fw-bold">$${precioFormateado}</div>
                                 <div class="text-muted small">Marca: ${prod.brand || '-'}</div>
-                                <div class="text-${prod.isActive ? 'success' : 'danger'} small">${prod.isActive ? 'Activo' : 'Inactivo'}</div>
+                                <div class="small ${prod.isActive ? 'badge-verde-retailmax badge' : 'badge-inactivo badge'}">${prod.isActive ? 'Activo' : 'Inactivo'}</div>
                                 <div class="d-flex justify-content-end gap-2 mt-2">
                                     <button class="btn btn-sm btn-outline-primary btn-edit-prod" data-id="${prod.productId}" title="Editar"><i class="bi bi-pencil"></i></button>
                                     <button class="btn btn-sm btn-outline-danger btn-del-prod" data-id="${prod.productId}" title="Eliminar"><i class="bi bi-trash"></i></button>
-                                    <button class="btn btn-sm ${prod.isActive ? 'btn-success' : 'btn-outline-secondary'} btn-toggle-prod" data-id="${prod.productId}" title="${prod.isActive ? 'Desactivar' : 'Activar'}">
+                                    <button class="btn btn-sm ${prod.isActive ? 'btn-verde-retailmax' : 'btn-outline-secondary'} btn-toggle-prod" data-id="${prod.productId}" title="${prod.isActive ? 'Desactivar' : 'Activar'}">
                                         <i class="bi ${prod.isActive ? 'bi-toggle-on' : 'bi-toggle-off'}"></i>
                                     </button>
                                 </div>
@@ -239,7 +334,7 @@
                     const id = btn.getAttribute('data-id');
                     setProdMsg('', '');
                     try {
-                        const res = await fetch(`${API_BASE}/productos/${id}`);
+                        const res = await fetch(`${API_BASE}/products/${id}`);
                         if (!res.ok) throw new Error('No se pudo obtener el producto');
                         const prod = await res.json();
                         document.getElementById('prodName').value = prod.name;
@@ -271,9 +366,9 @@
                     });
                     if (!result.isConfirmed) return;
                     try {
-                        const res = await fetch(`${API_BASE}/productos/${id}`, { method: 'DELETE' });
+                        const res = await fetch(`${API_BASE}/products/${id}`, { method: 'DELETE' });
                         if (!res.ok) throw new Error('No se pudo eliminar el producto');
-                        await cargarTodo();
+                        await refrescarTodo();
                         await Swal.fire('¡Eliminado!', 'El producto fue eliminado correctamente.', 'success');
                     } catch (err) {
                         await Swal.fire('Error', err.message, 'error');
@@ -284,10 +379,14 @@
                 btn.addEventListener('click', async (e) => {
                     const id = btn.getAttribute('data-id');
                     try {
-                        const res = await fetch(`${API_BASE}/productos/${id}/toggle-active`, { method: 'PUT' });
+                        // Buscar el estado actual del producto
+                        const resGet = await fetch(`${API_BASE}/products/${id}`);
+                        if (!resGet.ok) throw new Error('No se pudo obtener el producto');
+                        const prod = await resGet.json();
+                        const endpoint = prod.isActive ? 'deactivate' : 'activate';
+                        const res = await fetch(`${API_BASE}/products/${id}/${endpoint}`, { method: 'PUT' });
                         if (!res.ok) throw new Error('No se pudo cambiar el estado');
-                        await cargarTodo();
-                        await Swal.fire('¡Listo!', 'El estado del producto fue actualizado.', 'success');
+                        await refrescarTodo();
                     } catch (err) {
                         await Swal.fire('Error', err.message, 'error');
                     }
@@ -295,7 +394,7 @@
             });
         }
 
-        // Renderizar categorías
+        // Renderizar categorías (sin cambios)
         function renderCategorias(categoriasList) {
             const row = document.getElementById('categoriasRow');
             row.innerHTML = '';
@@ -312,11 +411,11 @@
                         <div class="card-body">
                             <h5 class="card-title">${cat.name}</h5>
                             <p class="card-text">${cat.description || ''}</p>
-                            <div class="text-${cat.isActive ? 'success' : 'danger'} small mb-2">${cat.isActive ? 'Activo' : 'Inactivo'}</div>
+                            <div class="small mb-2 ${cat.isActive ? 'badge-verde-retailmax badge' : 'badge-inactivo badge'}">${cat.isActive ? 'Activo' : 'Inactivo'}</div>
                             <div class="d-flex justify-content-end gap-2 mt-2">
                                 <button class="btn btn-sm btn-outline-primary btn-edit-cat" data-id="${cat.categoriaId}" title="Editar"><i class="bi bi-pencil"></i></button>
                                 <button class="btn btn-sm btn-outline-danger btn-del-cat" data-id="${cat.categoriaId}" title="Eliminar"><i class="bi bi-trash"></i></button>
-                                <button class="btn btn-sm ${cat.isActive ? 'btn-success' : 'btn-outline-secondary'} btn-toggle-cat" data-id="${cat.categoriaId}" title="${cat.isActive ? 'Desactivar' : 'Activar'}">
+                                <button class="btn btn-sm ${cat.isActive ? 'btn-verde-retailmax' : 'btn-outline-secondary'} btn-toggle-cat" data-id="${cat.categoriaId}" title="${cat.isActive ? 'Desactivar' : 'Activar'}">
                                     <i class="bi ${cat.isActive ? 'bi-toggle-on' : 'bi-toggle-off'}"></i>
                                 </button>
                             </div>
@@ -332,7 +431,7 @@
                     setCatMsg('', '');
                     // Consultar la categoría por la API
                     try {
-                        const res = await fetch(`${API_BASE}/categorias/${id}`);
+                        const res = await fetch(`${API_BASE}/categories/${id}`);
                         if (!res.ok) throw new Error('No se pudo obtener la categoría');
                         const cat = await res.json();
                         document.getElementById('catName').value = cat.name;
@@ -360,10 +459,10 @@
                     });
                     if (!result.isConfirmed) return;
                     try {
-                        const res = await fetch(`${API_BASE}/categorias/${id}`, { method: 'DELETE' });
+                        const res = await fetch(`${API_BASE}/categories/${id}`, { method: 'DELETE' });
                         if (!res.ok) throw new Error('No se pudo eliminar la categoría');
-                        await cargarTodo();
-                        await Swal.fire('¡Eliminado!', 'La categoría fue eliminada correctamente.', 'success');
+                        await refrescarTodo();
+                        await Swal.fire('¡Eliminada!', 'La categoría fue eliminada correctamente.', 'success');
                     } catch (err) {
                         await Swal.fire('Error', err.message, 'error');
                     }
@@ -373,10 +472,14 @@
                 btn.addEventListener('click', async (e) => {
                     const id = btn.getAttribute('data-id');
                     try {
-                        const res = await fetch(`${API_BASE}/categorias/${id}/toggle-active`, { method: 'PUT' });
+                        // Buscar el estado actual de la categoría
+                        const resGet = await fetch(`${API_BASE}/categories/${id}`);
+                        if (!resGet.ok) throw new Error('No se pudo obtener la categoría');
+                        const cat = await resGet.json();
+                        const endpoint = cat.isActive ? 'deactivate' : 'activate';
+                        const res = await fetch(`${API_BASE}/categories/${id}/${endpoint}`, { method: 'PUT' });
                         if (!res.ok) throw new Error('No se pudo cambiar el estado');
-                        await cargarTodo();
-                        await Swal.fire('¡Listo!', 'El estado de la categoría fue actualizado.', 'success');
+                        await refrescarTodo();
                     } catch (err) {
                         await Swal.fire('Error', err.message, 'error');
                     }
@@ -384,29 +487,96 @@
             });
         }
 
-        async function cargarTodo() {
-            await fetchCategorias();
-            await fetchProductos();
-            renderCategorias(Object.values(categorias));
+        // Lógica principal de filtros (asegura que categorias esté cargado antes de renderizar productos)
+        async function aplicarFiltros() {
+            let url = '';
+            let productos = [];
+            let total = 0;
+            const filtroCategoria = document.getElementById('filtroCategoria');
+            const filtroBusqueda = document.getElementById('filtroBusqueda');
+            const filtroOrden = document.getElementById('filtroOrden');
+            const filtroEstado = document.getElementById('filtroEstado');
+            const categoria = filtroCategoria ? filtroCategoria.value : '';
+            const busqueda = filtroBusqueda ? filtroBusqueda.value.trim() : '';
+            const orden = filtroOrden ? filtroOrden.value : '';
+            const estado = filtroEstado ? filtroEstado.value : 'todos';
+            let paginaActual = window.paginaActual || 0;
+            const tamanoPagina = 12;
+            if (busqueda) {
+                url = `${API_BASE}/products/search?q=${encodeURIComponent(busqueda)}`;
+                const res = await fetch(url);
+                productos = await res.json();
+                total = productos.length;
+            } else if (estado === 'inactivos') {
+                url = `${API_BASE}/products/inactivos`;
+                const res = await fetch(url);
+                productos = await res.json();
+                total = productos.length;
+            } else if (estado === 'activos') {
+                url = `${API_BASE}/products?`;
+                if (categoria) url += `categoria=${categoria}&`;
+                if (orden) url += `sort=${orden}&`;
+                url += `page=${paginaActual}&size=${tamanoPagina}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                productos = data._embedded ? data._embedded.productoList : data;
+                productos = productos.filter(p => p.isActive !== false);
+                total = productos.length < tamanoPagina ? (paginaActual * tamanoPagina + productos.length) : (paginaActual + 2) * tamanoPagina;
+            } else {
+                // Mostrar todos (activos e inactivos)
+                url = `${API_BASE}/products?`;
+                if (categoria) url += `categoria=${categoria}&`;
+                if (orden) url += `sort=${orden}&`;
+                url += `page=${paginaActual}&size=${tamanoPagina}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                productos = data._embedded ? data._embedded.productoList : data;
+                total = productos.length < tamanoPagina ? (paginaActual * tamanoPagina + productos.length) : (paginaActual + 2) * tamanoPagina;
+            }
+            renderProductos(productos);
+            renderPaginacion(total, paginaActual, tamanoPagina);
         }
 
-        document.getElementById('addCategoriaBtn').addEventListener('click', () => {
-            document.getElementById('formCategoria').reset();
-            setCatMsg('', '');
-            document.getElementById('formCategoria').removeAttribute('data-edit-id');
-            modalCategoria.show();
+        // Paginación (sin cambios)
+        function renderPaginacion(total, page, size) {
+            const totalPages = Math.ceil(total / size);
+            let html = '';
+            if (totalPages > 1) {
+                html += `<nav><ul class="pagination justify-content-center">`;
+                for (let i = 0; i < totalPages; i++) {
+                    html += `<li class="page-item${i === page ? ' active' : ''}"><a class="page-link" href="#" onclick="cambiarPagina(${i});return false;">${i + 1}</a></li>`;
+                }
+                html += `</ul></nav>`;
+            }
+            document.getElementById('paginacionProductos').innerHTML = html;
+        }
+        window.cambiarPagina = function(nuevaPag) {
+            window.paginaActual = nuevaPag;
+            aplicarFiltros();
+        };
+
+        // Botón de restablecer filtros
+        document.getElementById('btnResetFiltros').addEventListener('click', function() {
+            document.getElementById('filtrosForm').reset();
+            window.paginaActual = 0;
+            aplicarFiltros();
         });
-        document.getElementById('addProductoBtn').addEventListener('click', () => {
-            document.getElementById('formProducto').reset();
-            setProdMsg('', '');
-            cargarCategoriasDropdown();
-            modalProducto.show();
+
+        // Al cargar la página, cargar y renderizar categorías y productos
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarCategoriasYRenderizar();
+            aplicarFiltros();
         });
-        document.getElementById('batchBtn').addEventListener('click', () => {
-            document.getElementById('formBatch').reset();
-            setBatchMsg('', '');
-            modalBatch.show();
-        });
+
+        // Manejar el submit de filtros
+        const filtrosForm = document.getElementById('filtrosForm');
+        if (filtrosForm) {
+            filtrosForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                window.paginaActual = 0;
+                aplicarFiltros();
+            });
+        }
 
         // Modal y formulario de categoría
         const modalCategoria = new bootstrap.Modal(document.getElementById('modalCategoria'));
@@ -422,21 +592,21 @@
                 let res;
                 if (editId) {
                     // Edición
-                    res = await fetch(`${API_BASE}/categorias/${editId}`, {
+                    res = await fetch(`${API_BASE}/categories/${editId}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ name: nombre, description: desc, imageUrl: img || null })
                     });
                 } else {
                     // Creación
-                    res = await fetch(`${API_BASE}/categorias`, {
+                    res = await fetch(`${API_BASE}/categories`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ name: nombre, description: desc, imageUrl: img || null })
                     });
                 }
                 if (!res.ok) throw new Error(editId ? 'Error al editar categoría' : 'Error al crear categoría');
-                await cargarTodo();
+                await refrescarTodo();
                 await Swal.fire('¡Éxito!', editId ? 'Categoría editada exitosamente.' : 'Categoría creada exitosamente.', 'success');
                 setTimeout(() => { modalCategoria.hide(); }, 1000);
             } catch (err) {
@@ -465,13 +635,16 @@
             if (!msg) { el.className = 'alert d-none'; el.textContent = ''; return; }
             el.className = 'alert alert-' + type; el.textContent = msg;
         }
+        // Unificar carga de categorías para el dropdown del modal producto
         async function cargarCategoriasDropdown() {
-            // Solo categorías activas
-            const res = await fetch(`${API_BASE}/categorias`);
-            const data = await res.json();
+            const res = await fetch(`${API_BASE}/categories`);
+            let data = await res.json();
+            if (data._embedded && data._embedded.categoriaList) {
+                data = data._embedded.categoriaList;
+            }
             const select = document.getElementById('prodCat');
             select.innerHTML = '';
-            (data.filter ? data.filter(c => c.isActive !== false) : data).forEach(cat => {
+            data.filter(cat => cat.isActive !== false).forEach(cat => {
                 const opt = document.createElement('option');
                 opt.value = cat.categoriaId;
                 opt.textContent = cat.name;
@@ -491,22 +664,20 @@
             try {
                 let res;
                 if (editId) {
-                    // Edición
-                    res = await fetch(`${API_BASE}/productos/${editId}`, {
+                    res = await fetch(`${API_BASE}/products/${editId}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ name: nombre, description: desc, brand: brand, basePrice: price, imageUrl: img || null, categoria: { categoriaId: catId }, productId: editId })
                     });
                 } else {
-                    // Creación
-                    res = await fetch(`${API_BASE}/productos`, {
+                    res = await fetch(`${API_BASE}/products`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ name: nombre, description: desc, brand: brand, basePrice: price, imageUrl: img || null, categoria: { categoriaId: catId } })
                     });
                 }
                 if (!res.ok) throw new Error(editId ? 'Error al editar producto' : 'Error al crear producto');
-                await cargarTodo();
+                await refrescarTodo();
                 await Swal.fire('¡Éxito!', editId ? 'Producto editado exitosamente.' : 'Producto creado exitosamente.', 'success');
                 setTimeout(() => { modalProducto.hide(); }, 1000);
             } catch (err) {
@@ -535,21 +706,34 @@
                 return;
             }
             try {
-                const endpoint = `${API_BASE}/productos/batch`;
+                const endpoint = `${API_BASE}/products/batch`;
                 const res = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(datos)
                 });
                 if (!res.ok) throw new Error('Error al cargar datos batch');
-                await cargarTodo();
+                await refrescarTodo();
                 await Swal.fire('¡Carga batch exitosa!', 'Los productos fueron cargados correctamente.', 'success');
                 setTimeout(() => { modalBatch.hide(); }, 1200);
             } catch (err) {
                 await Swal.fire('Error', err.message, 'error');
             }
         });
-        window.addEventListener('DOMContentLoaded', cargarTodo);
+
+        // Asegurar apertura de modales de producto y batch
+        document.getElementById('addProductoBtn').addEventListener('click', async () => {
+            document.getElementById('formProducto').reset();
+            setProdMsg('', '');
+            document.getElementById('formProducto').removeAttribute('data-edit-id');
+            await cargarCategoriasDropdown();
+            modalProducto.show();
+        });
+        document.getElementById('batchBtn').addEventListener('click', () => {
+            document.getElementById('formBatch').reset();
+            setBatchMsg('', '');
+            modalBatch.show();
+        });
     </script>
 </body>
 </html> 

@@ -100,4 +100,9 @@ public class ProductoService {
     public void deleteProductoReal(Long id) {
         productoRepository.deleteById(id);
     }
+
+    // Listar todos los productos (activos e inactivos) con paginación
+    public Page<Producto> findAllPaged(Pageable pageable) {
+        return productoRepository.findAll(pageable);
+    }
 }

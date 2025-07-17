@@ -78,5 +78,85 @@
     "basePrice": 69990,
     "imageUrl": "https://dojiw2m9tvv09.cloudfront.net/74837/product/captura-de-pantalla-2022-12-05-a-la-s-22-31-155590.png",
     "categoria": { "categoriaId": 435 }
+  },
+  {
+    "name": "Balón de Fútbol",
+    "description": "Balón oficial tamaño 5, ideal para partidos y entrenamientos.",
+    "brand": "Adidas",
+    "basePrice": 19990,
+    "imageUrl": "https://media.falabella.com/falabellaCL/16874162_1/w=1500,h=1500,fit=pad",
+    "categoria": { "categoriaId": 437 }
+  },
+  {
+    "name": "Raqueta de Tenis",
+    "description": "Raqueta profesional de grafito, peso ligero.",
+    "brand": "Wilson",
+    "basePrice": 49990,
+    "imageUrl": "https://www.fulltenis.cl/wp-content/uploads/2024/10/Diapositiva1-3_1800x1800.webp",
+    "categoria": { "categoriaId": 437 }
+  },
+  {
+    "name": "Bicicleta de Montaña",
+    "description": "Bicicleta con suspensión delantera, 21 velocidades.",
+    "brand": "Oxford",
+    "basePrice": 159990,
+    "imageUrl": "https://www.abc.cl/dw/image/v2/BCPP_PRD/on/demandware.static/-/Sites-master-catalog/default/dw01fa2d37/images/large/6CC22004840.jpg?sw=1200&sh=1200&sm=fit",
+    "categoria": { "categoriaId": 437 }
+  },
+  {
+    "name": "Guantes de Boxeo",
+    "description": "Guantes acolchados para entrenamiento y competencia.",
+    "brand": "Everlast",
+    "basePrice": 29990,
+    "imageUrl": "https://gympro01.akamaized.net/10332-thickbox_default/guantes-de-box-prostyle-elite-everlast-verde.jpg",
+    "categoria": { "categoriaId": 437 }
+  },
+  {
+    "name": "Cinta de Correr",
+    "description": "Cinta eléctrica plegable con monitor de ritmo cardíaco.",
+    "brand": "Reebok",
+    "basePrice": 299990,
+    "imageUrl": "https://http2.mlstatic.com/D_NQ_NP_744315-MLA46709466678_072021-O.webp",
+    "categoria": { "categoriaId": 437 }
+  },
+  {
+    "name": "Silla Gamer Ergonómica",
+    "description": "Silla ergonómica con soporte lumbar, reclinable y apoyabrazos ajustables.",
+    "brand": "DXRacer",
+    "basePrice": 129990,
+    "imageUrl": "https://cl-cenco-pim-resizer.ecomm.cencosud.com/unsafe/adaptive-fit-in/3840x0/filters:quality(75)/prd-cl/product-medias/e978782a-30c3-43cc-9644-fdad5ae3b8d9/MKL6DRUZVR/MKL6DRUZVR-1/1686698441505-MKL6DRUZVR-1-2.webp",
+    "categoria": { "categoriaId": 457 }
+  },
+  {
+    "name": "Escritorio de Oficina Moderno",
+    "description": "Escritorio amplio con superficie de melamina y estructura metálica.",
+    "brand": "RTA",
+    "basePrice": 89990,
+    "imageUrl": "https://www.officedepot.com.mx/medias/100164791.jpg-515ftw?context=bWFzdGVyfHJvb3R8NTE2MDZ8aW1hZ2UvanBlZ3xhR0ptTDJneE9DOHhNakUyT0RnME1EVTBOREk0Tmk4eE1EQXhOalEzT1RFdWFuQm5YelV4TldaMGR3fGIzMWZlZDhlZTY4MDFhNGVhODQ3NWU1MGU1ODgyOGM3NjgyYmE0ODRmN2Y2ZjI0YzAwMDVlYzFjNWI5OGZlYmQ",
+    "categoria": { "categoriaId": 457 }
+  },
+  {
+    "name": "Lámpara de Escritorio LED",
+    "description": "Lámpara con brazo flexible, luz LED regulable y puerto USB.",
+    "brand": "Philips",
+    "basePrice": 24990,
+    "imageUrl": "https://www.assets.signify.com/is/image/Signify/Donutclip_DSK201_PT_Pink_USB-SPP",
+    "categoria": { "categoriaId": 457 }
+  },
+  {
+    "name": "Sofá Cama 2 Plazas",
+    "description": "Sofá cama tapizado en tela, ideal para espacios pequeños y oficinas en casa.",
+    "brand": "Homy",
+    "basePrice": 189990,
+    "imageUrl": "https://media.falabella.com/sodimacCL/6827136_01/w=800,h=800,fit=pad",
+    "categoria": { "categoriaId": 457 }
+  },
+  {
+    "name": "Estantería Modular",
+    "description": "Estantería de madera con 5 niveles, ideal para libros, decoración u oficina.",
+    "brand": "Mica",
+    "basePrice": 59990,
+    "imageUrl": "https://imagedelivery.net/4fYuQyy-r8_rpBpcY7lH_A/falabellaCO/12487030_3/w=800,h=800,fit=pad",
+    "categoria": { "categoriaId": 457 }
   }
 ] 

@@ -15,6 +15,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -306,5 +308,45 @@ class ProductoControllerIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(java.util.List.of(valido, invalido))))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testCreateProductosBatchExactamente100() throws Exception {
+        List<Producto> productos = new java.util.ArrayList<>();
+        for (int i = 1; i <= 100; i++) { // Exactamente 100 productos, debería funcionar
+            Producto p = new Producto();
+            p.setName("Prod" + i);
+            p.setDescription("Desc" + i);
+            p.setBrand("Marca" + i);
+            p.setBasePrice(10 * i);
+            p.setIsActive(true);
+            p.setCategoria(categoria);
+            productos.add(p);
+        }
+        mockMvc.perform(post("/api/products/batch")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(productos)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.length()").value(100));
+    }
+
+    @Test
+    void testCreateProductosBatchMasDe100() throws Exception {
+        List<Producto> productos = new java.util.ArrayList<>();
+        for (int i = 1; i <= 101; i++) { // 101 productos, debería fallar
+            Producto p = new Producto();
+            p.setName("Prod" + i);
+            p.setDescription("Desc" + i);
+            p.setBrand("Marca" + i);
+            p.setBasePrice(10 * i);
+            p.setIsActive(true);
+            p.setCategoria(categoria);
+            productos.add(p);
+        }
+        mockMvc.perform(post("/api/products/batch")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(productos)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("No se pueden agregar más de 100 productos por batch."));
     }
 } 

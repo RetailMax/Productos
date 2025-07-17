@@ -80,7 +80,17 @@ Sigue estos pasos para reconstruir y desplegar la aplicación después de realiz
 
 - Documentación Swagger UI: [https://productos-459829548521.southamerica-west1.run.app/doc/swagger-ui/index.html](https://productos-459829548521.southamerica-west1.run.app/doc/swagger-ui/index.html)
 
+**Último despliegue:** 17 de Julio 2025 - Revisión productos-00019-jsj
+
 **Notas:**
 - Asegúrate de tener configurado el proyecto correcto en Google Cloud (`productos-microservicio`).
 - Si es la primera vez, ejecuta `gcloud auth login` y `gcloud auth configure-docker`.
 - Puedes modificar el nombre del servicio (`productos`) o la región si lo necesitas.
+
+## Notas de gestión de productos y categorías
+
+- El sistema permite ver y administrar productos y categorías tanto activos como inactivos desde el frontend, gracias al filtro de estado y la visualización de ambos tipos en la grilla.
+
+## Próximos pasos
+
+- Falta volver a ajustar y actualizar las pruebas unitarias tras los últimos cambios. Esto se realizará en la próxima sesión de desarrollo.
