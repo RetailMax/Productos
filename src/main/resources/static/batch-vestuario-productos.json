@@ -1,0 +1,72 @@
+[
+  {
+    "name": "Camisa Polo Azul",
+    "description": "Camisa polo de algodón 100%, color azul marino, ideal para uso casual y deportivo.",
+    "brand": "Lacoste",
+    "basePrice": 45000,
+    "categoria": { "categoriaId": 438 }
+  },
+  {
+    "name": "Jeans Slim Fit Negro",
+    "description": "Jeans de corte slim fit en color negro, con stretch para mayor comodidad.",
+    "brand": "Levi's",
+    "basePrice": 65000,
+    "categoria": { "categoriaId": 438 }
+  },
+  {
+    "name": "Chaqueta Bomber Negra",
+    "description": "Chaqueta bomber de nylon con forro interior, perfecta para días fríos.",
+    "brand": "Nike",
+    "basePrice": 89000,
+    "categoria": { "categoriaId": 438 }
+  },
+  {
+    "name": "Vestido Cocktail Rojo",
+    "description": "Vestido elegante para ocasiones especiales, color rojo vibrante con detalles en encaje.",
+    "brand": "Zara",
+    "basePrice": 75000,
+    "categoria": { "categoriaId": 438 }
+  },
+  {
+    "name": "Sudadera con Capucha Gris",
+    "description": "Sudadera de algodón con capucha, color gris, ideal para uso casual y deportivo.",
+    "brand": "Adidas",
+    "basePrice": 55000,
+    "categoria": { "categoriaId": 438 }
+  },
+  {
+    "name": "Blazer Formal Negro",
+    "description": "Blazer formal de lana, color negro, perfecto para reuniones de trabajo y eventos formales.",
+    "brand": "H&M",
+    "basePrice": 95000,
+    "categoria": { "categoriaId": 438 }
+  },
+  {
+    "name": "Falda Plisada Escocesa",
+    "description": "Falda plisada con estampado escocés, perfecta para looks preppy y casuales.",
+    "brand": "Forever 21",
+    "basePrice": 35000,
+    "categoria": { "categoriaId": 438 }
+  },
+  {
+    "name": "Pantalón Chino Beige",
+    "description": "Pantalón chino de algodón, color beige, versátil para uso casual y semi-formal.",
+    "brand": "Gap",
+    "basePrice": 48000,
+    "categoria": { "categoriaId": 438 }
+  },
+  {
+    "name": "Camiseta Básica Blanca",
+    "description": "Camiseta básica de algodón 100%, color blanco, esencial para cualquier guardarropa.",
+    "brand": "Uniqlo",
+    "basePrice": 15000,
+    "categoria": { "categoriaId": 438 }
+  },
+  {
+    "name": "Traje de Baño Azul Marino",
+    "description": "Traje de baño de poliéster con elastano, color azul marino, resistente al cloro.",
+    "brand": "Speedo",
+    "basePrice": 42000,
+    "categoria": { "categoriaId": 438 }
+  }
+] 

@@ -80,7 +80,7 @@ Sigue estos pasos para reconstruir y desplegar la aplicación después de realiz
 
 - Documentación Swagger UI: [https://productos-459829548521.southamerica-west1.run.app/doc/swagger-ui/index.html](https://productos-459829548521.southamerica-west1.run.app/doc/swagger-ui/index.html)
 
-**Último despliegue:** 17 de Julio 2025 - Revisión productos-00019-jsj
+**Último despliegue:** 17 de Julio 2025 - Revisión productos-00021-hnc (Agregado conteo de productos en cards de categorías)
 
 **Notas:**
 - Asegúrate de tener configurado el proyecto correcto en Google Cloud (`productos-microservicio`).

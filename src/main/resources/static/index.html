@@ -60,6 +60,11 @@
           <img src="retailmax.png" alt="RetailMax" width="80" height="80" class="me-2" style="object-fit:contain;">
           <span class="fw-bold">RetailMax</span>
         </a>
+        <div class="navbar-nav ms-auto me-3">
+          <button id="apiTesterBtn" class="btn btn-outline-primary">
+            <i class="bi bi-code-slash me-1"></i>API Tester
+          </button>
+        </div>
       </div>
     </nav>
     <div class="container-fluid">
@@ -233,6 +238,271 @@
                         </div>
                       </div>
                     </div>
+                    <!-- Modal API Tester -->
+                    <div class="modal fade" id="modalApiTester" tabindex="-1" aria-labelledby="modalApiTesterLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="modalApiTesterLabel">
+                              <i class="bi bi-code-slash me-2"></i>API Tester - Simulando Postman
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="row">
+                              <!-- COLUMNA 1 - CATEGORÍAS -->
+                              <div class="col-md-6">
+                                <h6 class="mb-3"><i class="bi bi-tags me-2"></i>Endpoints de Categorías</h6>
+                                
+                                <!-- GET /api/categories -->
+                                <div class="card mb-3">
+                                  <div class="card-header bg-primary text-white">
+                                    <i class="bi bi-list me-2"></i>GET /api/categories
+                                  </div>
+                                  <div class="card-body">
+                                    <div class="mb-2">
+                                      <small class="text-muted">Status: <span id="categoriesStatus" class="badge bg-secondary">Pendiente</span></small>
+                                    </div>
+                                    <button id="testCategoriesBtn" class="btn btn-sm btn-primary mb-2">
+                                      <i class="bi bi-play me-1"></i>Probar Endpoint
+                                    </button>
+                                    <div class="border rounded p-2 bg-light" style="max-height: 150px; overflow-y: auto;">
+                                      <pre id="categoriesResponse" class="mb-0" style="font-size: 0.8em;">Haz clic en "Probar Endpoint" para ver la respuesta...</pre>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <!-- GET /api/categories/{id} -->
+                                <div class="card mb-3">
+                                  <div class="card-header bg-primary text-white">
+                                    <i class="bi bi-search me-2"></i>GET /api/categories/{id}
+                                  </div>
+                                  <div class="card-body">
+                                    <div class="mb-2">
+                                      <small class="text-muted">Status: <span id="categoryByIdStatus" class="badge bg-secondary">Pendiente</span></small>
+                                    </div>
+                                    <div class="input-group mb-2">
+                                      <input type="number" id="categoryIdInput" class="form-control form-control-sm" placeholder="ID de categoría" value="1">
+                                      <button id="testCategoryByIdBtn" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-play me-1"></i>Probar
+                                      </button>
+                                    </div>
+                                    <div class="border rounded p-2 bg-light" style="max-height: 150px; overflow-y: auto;">
+                                      <pre id="categoryByIdResponse" class="mb-0" style="font-size: 0.8em;">Ingresa un ID y haz clic en "Probar"</pre>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <!-- GET /api/categories/search -->
+                                <div class="card mb-3">
+                                  <div class="card-header bg-primary text-white">
+                                    <i class="bi bi-search me-2"></i>GET /api/categories/search
+                                  </div>
+                                  <div class="card-body">
+                                    <div class="mb-2">
+                                      <small class="text-muted">Status: <span id="categorySearchStatus" class="badge bg-secondary">Pendiente</span></small>
+                                    </div>
+                                    <div class="input-group mb-2">
+                                      <input type="text" id="categorySearchInput" class="form-control form-control-sm" placeholder="Término de búsqueda" value="tecnología">
+                                      <button id="testCategorySearchBtn" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-play me-1"></i>Probar
+                                      </button>
+                                    </div>
+                                    <div class="border rounded p-2 bg-light" style="max-height: 150px; overflow-y: auto;">
+                                      <pre id="categorySearchResponse" class="mb-0" style="font-size: 0.8em;">Ingresa un término y haz clic en "Probar"</pre>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <!-- GET /api/categories/exists -->
+                                <div class="card mb-3">
+                                  <div class="card-header bg-primary text-white">
+                                    <i class="bi bi-check-circle me-2"></i>GET /api/categories/exists
+                                  </div>
+                                  <div class="card-body">
+                                    <div class="mb-2">
+                                      <small class="text-muted">Status: <span id="categoryExistsStatus" class="badge bg-secondary">Pendiente</span></small>
+                                    </div>
+                                    <div class="input-group mb-2">
+                                      <input type="text" id="categoryExistsInput" class="form-control form-control-sm" placeholder="Nombre de categoría" value="Tecnología">
+                                      <button id="testCategoryExistsBtn" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-play me-1"></i>Probar
+                                      </button>
+                                    </div>
+                                    <div class="border rounded p-2 bg-light" style="max-height: 150px; overflow-y: auto;">
+                                      <pre id="categoryExistsResponse" class="mb-0" style="font-size: 0.8em;">Ingresa un nombre y haz clic en "Probar"</pre>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <!-- COLUMNA 2 - PRODUCTOS -->
+                              <div class="col-md-6">
+                                <h6 class="mb-3"><i class="bi bi-box-seam me-2"></i>Endpoints de Productos</h6>
+                                
+                                <!-- GET /api/products -->
+                                <div class="card mb-3">
+                                  <div class="card-header bg-success text-white">
+                                    <i class="bi bi-list me-2"></i>GET /api/products
+                                  </div>
+                                  <div class="card-body">
+                                    <div class="mb-2">
+                                      <small class="text-muted">Status: <span id="productsStatus" class="badge bg-secondary">Pendiente</span></small>
+                                    </div>
+                                    <button id="testProductsBtn" class="btn btn-sm btn-success mb-2">
+                                      <i class="bi bi-play me-1"></i>Probar Endpoint
+                                    </button>
+                                    <div class="border rounded p-2 bg-light" style="max-height: 150px; overflow-y: auto;">
+                                      <pre id="productsResponse" class="mb-0" style="font-size: 0.8em;">Haz clic en "Probar Endpoint" para ver la respuesta...</pre>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <!-- GET /api/products/{id} -->
+                                <div class="card mb-3">
+                                  <div class="card-header bg-success text-white">
+                                    <i class="bi bi-search me-2"></i>GET /api/products/{id}
+                                  </div>
+                                  <div class="card-body">
+                                    <div class="mb-2">
+                                      <small class="text-muted">Status: <span id="productByIdStatus" class="badge bg-secondary">Pendiente</span></small>
+                                    </div>
+                                    <div class="input-group mb-2">
+                                      <input type="number" id="productIdInput" class="form-control form-control-sm" placeholder="ID de producto" value="1">
+                                      <button id="testProductByIdBtn" class="btn btn-sm btn-success">
+                                        <i class="bi bi-play me-1"></i>Probar
+                                      </button>
+                                    </div>
+                                    <div class="border rounded p-2 bg-light" style="max-height: 150px; overflow-y: auto;">
+                                      <pre id="productByIdResponse" class="mb-0" style="font-size: 0.8em;">Ingresa un ID y haz clic en "Probar"</pre>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <!-- GET /api/products/search -->
+                                <div class="card mb-3">
+                                  <div class="card-header bg-success text-white">
+                                    <i class="bi bi-search me-2"></i>GET /api/products/search
+                                  </div>
+                                  <div class="card-body">
+                                    <div class="mb-2">
+                                      <small class="text-muted">Status: <span id="productSearchStatus" class="badge bg-secondary">Pendiente</span></small>
+                                    </div>
+                                    <div class="input-group mb-2">
+                                      <input type="text" id="productSearchInput" class="form-control form-control-sm" placeholder="Término de búsqueda" value="laptop">
+                                      <button id="testProductSearchBtn" class="btn btn-sm btn-success">
+                                        <i class="bi bi-play me-1"></i>Probar
+                                      </button>
+                                    </div>
+                                    <div class="border rounded p-2 bg-light" style="max-height: 150px; overflow-y: auto;">
+                                      <pre id="productSearchResponse" class="mb-0" style="font-size: 0.8em;">Ingresa un término y haz clic en "Probar"</pre>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <!-- GET /api/products/inactivos -->
+                                <div class="card mb-3">
+                                  <div class="card-header bg-warning text-dark">
+                                    <i class="bi bi-x-circle me-2"></i>GET /api/products/inactivos
+                                  </div>
+                                  <div class="card-body">
+                                    <div class="mb-2">
+                                      <small class="text-muted">Status: <span id="productsInactivosStatus" class="badge bg-secondary">Pendiente</span></small>
+                                    </div>
+                                    <button id="testProductsInactivosBtn" class="btn btn-sm btn-warning mb-2">
+                                      <i class="bi bi-play me-1"></i>Probar Endpoint
+                                    </button>
+                                    <div class="border rounded p-2 bg-light" style="max-height: 150px; overflow-y: auto;">
+                                      <pre id="productsInactivosResponse" class="mb-0" style="font-size: 0.8em;">Haz clic en "Probar Endpoint" para ver la respuesta...</pre>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <!-- GET /api/products/count-by-categoria -->
+                                <div class="card mb-3">
+                                  <div class="card-header bg-info text-white">
+                                    <i class="bi bi-bar-chart me-2"></i>GET /api/products/count-by-categoria
+                                  </div>
+                                  <div class="card-body">
+                                    <div class="mb-2">
+                                      <small class="text-muted">Status: <span id="countStatus" class="badge bg-secondary">Pendiente</span></small>
+                                    </div>
+                                    <button id="testCountBtn" class="btn btn-sm btn-info mb-2">
+                                      <i class="bi bi-play me-1"></i>Probar Endpoint
+                                    </button>
+                                    <div class="border rounded p-2 bg-light" style="max-height: 150px; overflow-y: auto;">
+                                      <pre id="countResponse" class="mb-0" style="font-size: 0.8em;">Haz clic en "Probar Endpoint" para ver la respuesta...</pre>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <!-- GET /api/products/exists -->
+                                <div class="card mb-3">
+                                  <div class="card-header bg-success text-white">
+                                    <i class="bi bi-check-circle me-2"></i>GET /api/products/exists
+                                  </div>
+                                  <div class="card-body">
+                                    <div class="mb-2">
+                                      <small class="text-muted">Status: <span id="productExistsStatus" class="badge bg-secondary">Pendiente</span></small>
+                                    </div>
+                                    <div class="input-group mb-2">
+                                      <input type="text" id="productExistsInput" class="form-control form-control-sm" placeholder="Nombre de producto" value="Laptop">
+                                      <button id="testProductExistsBtn" class="btn btn-sm btn-success">
+                                        <i class="bi bi-play me-1"></i>Probar
+                                      </button>
+                                    </div>
+                                    <div class="border rounded p-2 bg-light" style="max-height: 150px; overflow-y: auto;">
+                                      <pre id="productExistsResponse" class="mb-0" style="font-size: 0.8em;">Ingresa un nombre y haz clic en "Probar"</pre>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row mt-3">
+                              <div class="col-12">
+                                <div class="card">
+                                  <div class="card-header bg-info text-white">
+                                    <i class="bi bi-info-circle me-2"></i>Información de la API
+                                  </div>
+                                  <div class="card-body">
+                                    <div class="row">
+                                      <div class="col-md-6">
+                                        <h6>Endpoints GET Disponibles:</h6>
+                                        <ul class="list-unstyled">
+                                          <li><code>GET /api/categories</code> - Listar todas las categorías</li>
+                                          <li><code>GET /api/categories/{id}</code> - Obtener categoría por ID</li>
+                                          <li><code>GET /api/categories/search?q=term</code> - Buscar categorías</li>
+                                          <li><code>GET /api/categories/exists?name=nombre</code> - Verificar existencia</li>
+                                          <li><code>GET /api/products</code> - Listar todos los productos</li>
+                                          <li><code>GET /api/products/{id}</code> - Obtener producto por ID</li>
+                                          <li><code>GET /api/products/search?q=term</code> - Buscar productos</li>
+                                          <li><code>GET /api/products/inactivos</code> - Productos inactivos</li>
+                                          <li><code>GET /api/products/count-by-categoria</code> - Contar por categoría</li>
+                                          <li><code>GET /api/products/exists?name=nombre</code> - Verificar existencia</li>
+                                        </ul>
+                                      </div>
+                                      <div class="col-md-6">
+                                        <h6>Características:</h6>
+                                        <ul class="list-unstyled">
+                                          <li>✅ HATEOAS - Navegación dinámica</li>
+                                          <li>✅ Paginación automática</li>
+                                          <li>✅ Filtros por categoría</li>
+                                          <li>✅ Búsqueda por nombre</li>
+                                          <li>✅ Validación de datos</li>
+                                        </ul>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                     <h2 class="h5 mb-3">Productos</h2>
                     <div id="productsRow" class="row g-4">
                         <!-- Aquí se insertarán las cards de productos -->
@@ -268,7 +538,7 @@
             data.forEach(cat => {
                 categorias[cat.categoriaId] = cat;
             });
-            renderCategorias(data);
+            await renderCategorias(data);
             // También llenar el filtro de categorías
             const filtroCategoria = document.getElementById('filtroCategoria');
             if (filtroCategoria) {
@@ -394,15 +664,38 @@
             });
         }
 
-        // Renderizar categorías (sin cambios)
-        function renderCategorias(categoriasList) {
+        // Obtener conteo de productos por categoría
+        async function obtenerConteoProductos() {
+            try {
+                const response = await fetch(`${API_BASE}/products/count-by-categoria`);
+                const data = await response.json();
+                const conteoMap = {};
+                if (Array.isArray(data)) {
+                    data.forEach(item => {
+                        conteoMap[item[0]] = item[1]; // categoriaId -> cantidad
+                    });
+                }
+                return conteoMap;
+            } catch (error) {
+                console.error('Error obteniendo conteo de productos:', error);
+                return {};
+            }
+        }
+
+        // Renderizar categorías con conteo de productos
+        async function renderCategorias(categoriasList) {
             const row = document.getElementById('categoriasRow');
             row.innerHTML = '';
             if (!categoriasList || categoriasList.length === 0) {
                 row.innerHTML = '<div class="col-12"><div class="alert alert-info">No hay categorías para mostrar.</div></div>';
                 return;
             }
+
+            // Obtener conteo de productos
+            const conteoProductos = await obtenerConteoProductos();
+
             categoriasList.forEach(cat => {
+                const cantidadProductos = conteoProductos[cat.categoriaId] || 0;
                 const card = document.createElement('div');
                 card.className = 'col-12 col-sm-6 col-md-4 col-lg-3';
                 card.innerHTML = `
@@ -411,7 +704,12 @@
                         <div class="card-body">
                             <h5 class="card-title">${cat.name}</h5>
                             <p class="card-text">${cat.description || ''}</p>
-                            <div class="small mb-2 ${cat.isActive ? 'badge-verde-retailmax badge' : 'badge-inactivo badge'}">${cat.isActive ? 'Activo' : 'Inactivo'}</div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="small ${cat.isActive ? 'badge-verde-retailmax badge' : 'badge-inactivo badge'}">${cat.isActive ? 'Activo' : 'Inactivo'}</div>
+                                <div class="small text-muted">
+                                    <i class="bi bi-box-seam me-1"></i>${cantidadProductos} productos
+                                </div>
+                            </div>
                             <div class="d-flex justify-content-end gap-2 mt-2">
                                 <button class="btn btn-sm btn-outline-primary btn-edit-cat" data-id="${cat.categoriaId}" title="Editar"><i class="bi bi-pencil"></i></button>
                                 <button class="btn btn-sm btn-outline-danger btn-del-cat" data-id="${cat.categoriaId}" title="Eliminar"><i class="bi bi-trash"></i></button>
@@ -733,6 +1031,268 @@
             document.getElementById('formBatch').reset();
             setBatchMsg('', '');
             modalBatch.show();
+        });
+
+        // API Tester functionality
+        const modalApiTester = new bootstrap.Modal(document.getElementById('modalApiTester'));
+        
+        document.getElementById('apiTesterBtn').addEventListener('click', () => {
+            modalApiTester.show();
+        });
+
+        // Test Categories endpoint
+        document.getElementById('testCategoriesBtn').addEventListener('click', async () => {
+            const statusEl = document.getElementById('categoriesStatus');
+            const responseEl = document.getElementById('categoriesResponse');
+            
+            statusEl.className = 'badge bg-warning';
+            statusEl.textContent = 'Procesando...';
+            responseEl.textContent = 'Realizando petición...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/categories`);
+                const data = await response.json();
+                
+                statusEl.className = response.ok ? 'badge bg-success' : 'badge bg-danger';
+                statusEl.textContent = response.ok ? '200 OK' : `${response.status} Error`;
+                
+                responseEl.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                statusEl.className = 'badge bg-danger';
+                statusEl.textContent = 'Error';
+                responseEl.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Test Products endpoint
+        document.getElementById('testProductsBtn').addEventListener('click', async () => {
+            const statusEl = document.getElementById('productsStatus');
+            const responseEl = document.getElementById('productsResponse');
+            
+            statusEl.className = 'badge bg-warning';
+            statusEl.textContent = 'Procesando...';
+            responseEl.textContent = 'Realizando petición...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/products`);
+                const data = await response.json();
+                
+                statusEl.className = response.ok ? 'badge bg-success' : 'badge bg-danger';
+                statusEl.textContent = response.ok ? '200 OK' : `${response.status} Error`;
+                
+                responseEl.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                statusEl.className = 'badge bg-danger';
+                statusEl.textContent = 'Error';
+                responseEl.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Test Count by Category endpoint
+        document.getElementById('testCountBtn').addEventListener('click', async () => {
+            const statusEl = document.getElementById('countStatus');
+            const responseEl = document.getElementById('countResponse');
+            
+            statusEl.className = 'badge bg-warning';
+            statusEl.textContent = 'Procesando...';
+            responseEl.textContent = 'Realizando petición...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/products/count-by-categoria`);
+                const data = await response.json();
+                
+                statusEl.className = response.ok ? 'badge bg-success' : 'badge bg-danger';
+                statusEl.textContent = response.ok ? '200 OK' : `${response.status} Error`;
+                
+                // Formatear la respuesta para mejor legibilidad
+                let formattedResponse = 'Formato: [categoriaId, cantidad]\n\n';
+                if (Array.isArray(data)) {
+                    data.forEach((item, index) => {
+                        formattedResponse += `Categoría ${item[0]}: ${item[1]} productos\n`;
+                    });
+                }
+                formattedResponse += '\nJSON Original:\n' + JSON.stringify(data, null, 2);
+                
+                responseEl.textContent = formattedResponse;
+            } catch (error) {
+                statusEl.className = 'badge bg-danger';
+                statusEl.textContent = 'Error';
+                responseEl.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Test Category by ID endpoint
+        document.getElementById('testCategoryByIdBtn').addEventListener('click', async () => {
+            const statusEl = document.getElementById('categoryByIdStatus');
+            const responseEl = document.getElementById('categoryByIdResponse');
+            const id = document.getElementById('categoryIdInput').value;
+            
+            statusEl.className = 'badge bg-warning';
+            statusEl.textContent = 'Procesando...';
+            responseEl.textContent = 'Realizando petición...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/categories/${id}`);
+                const data = await response.json();
+                
+                statusEl.className = response.ok ? 'badge bg-success' : 'badge bg-danger';
+                statusEl.textContent = response.ok ? '200 OK' : `${response.status} Error`;
+                
+                responseEl.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                statusEl.className = 'badge bg-danger';
+                statusEl.textContent = 'Error';
+                responseEl.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Test Category Search endpoint
+        document.getElementById('testCategorySearchBtn').addEventListener('click', async () => {
+            const statusEl = document.getElementById('categorySearchStatus');
+            const responseEl = document.getElementById('categorySearchResponse');
+            const query = document.getElementById('categorySearchInput').value;
+            
+            statusEl.className = 'badge bg-warning';
+            statusEl.textContent = 'Procesando...';
+            responseEl.textContent = 'Realizando petición...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/categories/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                
+                statusEl.className = response.ok ? 'badge bg-success' : 'badge bg-danger';
+                statusEl.textContent = response.ok ? '200 OK' : `${response.status} Error`;
+                
+                responseEl.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                statusEl.className = 'badge bg-danger';
+                statusEl.textContent = 'Error';
+                responseEl.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Test Category Exists endpoint
+        document.getElementById('testCategoryExistsBtn').addEventListener('click', async () => {
+            const statusEl = document.getElementById('categoryExistsStatus');
+            const responseEl = document.getElementById('categoryExistsResponse');
+            const name = document.getElementById('categoryExistsInput').value;
+            
+            statusEl.className = 'badge bg-warning';
+            statusEl.textContent = 'Procesando...';
+            responseEl.textContent = 'Realizando petición...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/categories/exists?name=${encodeURIComponent(name)}`);
+                const data = await response.json();
+                
+                statusEl.className = response.ok ? 'badge bg-success' : 'badge bg-danger';
+                statusEl.textContent = response.ok ? '200 OK' : `${response.status} Error`;
+                
+                responseEl.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                statusEl.className = 'badge bg-danger';
+                statusEl.textContent = 'Error';
+                responseEl.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Test Product by ID endpoint
+        document.getElementById('testProductByIdBtn').addEventListener('click', async () => {
+            const statusEl = document.getElementById('productByIdStatus');
+            const responseEl = document.getElementById('productByIdResponse');
+            const id = document.getElementById('productIdInput').value;
+            
+            statusEl.className = 'badge bg-warning';
+            statusEl.textContent = 'Procesando...';
+            responseEl.textContent = 'Realizando petición...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/products/${id}`);
+                const data = await response.json();
+                
+                statusEl.className = response.ok ? 'badge bg-success' : 'badge bg-danger';
+                statusEl.textContent = response.ok ? '200 OK' : `${response.status} Error`;
+                
+                responseEl.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                statusEl.className = 'badge bg-danger';
+                statusEl.textContent = 'Error';
+                responseEl.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Test Product Search endpoint
+        document.getElementById('testProductSearchBtn').addEventListener('click', async () => {
+            const statusEl = document.getElementById('productSearchStatus');
+            const responseEl = document.getElementById('productSearchResponse');
+            const query = document.getElementById('productSearchInput').value;
+            
+            statusEl.className = 'badge bg-warning';
+            statusEl.textContent = 'Procesando...';
+            responseEl.textContent = 'Realizando petición...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/products/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                
+                statusEl.className = response.ok ? 'badge bg-success' : 'badge bg-danger';
+                statusEl.textContent = response.ok ? '200 OK' : `${response.status} Error`;
+                
+                responseEl.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                statusEl.className = 'badge bg-danger';
+                statusEl.textContent = 'Error';
+                responseEl.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Test Products Inactivos endpoint
+        document.getElementById('testProductsInactivosBtn').addEventListener('click', async () => {
+            const statusEl = document.getElementById('productsInactivosStatus');
+            const responseEl = document.getElementById('productsInactivosResponse');
+            
+            statusEl.className = 'badge bg-warning';
+            statusEl.textContent = 'Procesando...';
+            responseEl.textContent = 'Realizando petición...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/products/inactivos`);
+                const data = await response.json();
+                
+                statusEl.className = response.ok ? 'badge bg-success' : 'badge bg-danger';
+                statusEl.textContent = response.ok ? '200 OK' : `${response.status} Error`;
+                
+                responseEl.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                statusEl.className = 'badge bg-danger';
+                statusEl.textContent = 'Error';
+                responseEl.textContent = `Error: ${error.message}`;
+            }
+        });
+
+        // Test Product Exists endpoint
+        document.getElementById('testProductExistsBtn').addEventListener('click', async () => {
+            const statusEl = document.getElementById('productExistsStatus');
+            const responseEl = document.getElementById('productExistsResponse');
+            const name = document.getElementById('productExistsInput').value;
+            
+            statusEl.className = 'badge bg-warning';
+            statusEl.textContent = 'Procesando...';
+            responseEl.textContent = 'Realizando petición...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/products/exists?name=${encodeURIComponent(name)}`);
+                const data = await response.json();
+                
+                statusEl.className = response.ok ? 'badge bg-success' : 'badge bg-danger';
+                statusEl.textContent = response.ok ? '200 OK' : `${response.status} Error`;
+                
+                responseEl.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                statusEl.className = 'badge bg-danger';
+                statusEl.textContent = 'Error';
+                responseEl.textContent = `Error: ${error.message}`;
+            }
         });
     </script>
 </body>
